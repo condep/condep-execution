@@ -30,7 +30,7 @@ namespace ConDep.Dsl.Sequence
             }
         }
 
-        public virtual void Execute(IServerConfig server, IReportStatus status, ConDepSettings settings, CancellationToken token)
+        public virtual void Execute(ServerConfig server, IReportStatus status, ConDepSettings settings, CancellationToken token)
         {
             Logger.WithLogSection(_compositeName, () =>
             {

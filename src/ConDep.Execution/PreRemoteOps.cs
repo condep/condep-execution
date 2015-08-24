@@ -18,7 +18,7 @@ namespace ConDep.Dsl
             _psExecutor = psExecutor;
         }
 
-        public void Execute(IServerConfig server, IReportStatus status, ConDepSettings settings, CancellationToken token)
+        public void Execute(ServerConfig server, IReportStatus status, ConDepSettings settings, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
 
@@ -40,7 +40,7 @@ namespace ConDep.Dsl
                 });
         }
 
-        private void InstallChocolatey(IServerConfig server, ConDepSettings settings)
+        private void InstallChocolatey(ServerConfig server, ConDepSettings settings)
         {
             Logger.WithLogSection("Installing Chocolatey", () =>
             {
@@ -67,7 +67,7 @@ catch {
             return true;
         }
 
-        private void PublishConDepNode(IServerConfig server, ConDepSettings settings)
+        private void PublishConDepNode(ServerConfig server, ConDepSettings settings)
         {
             Logger.WithLogSection("Validating ConDepNode", () =>
                 {

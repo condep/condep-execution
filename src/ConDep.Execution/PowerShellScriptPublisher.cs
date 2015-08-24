@@ -19,7 +19,7 @@ namespace ConDep.Dsl.Remote
             _settings = settings;
         }
 
-        public void PublishScripts(IServerConfig server)
+        public void PublishScripts(ServerConfig server)
         {
             string localTargetPath = Path.Combine(Path.GetTempPath(), @"PSScripts\ConDep");
 
@@ -36,13 +36,13 @@ namespace ConDep.Dsl.Remote
             SyncDir(localTargetPath, server.GetServerInfo().ConDepScriptsFolderDos, server, _settings);
         }
 
-        public void SyncDir(string srcDir, string dstDir, IServerConfig server, ConDepSettings settings)
+        public void SyncDir(string srcDir, string dstDir, ServerConfig server, ConDepSettings settings)
         {
             var filePublisher = new FilePublisher();
             filePublisher.PublishDirectory(srcDir, dstDir, server, settings);
         }
 
-        public void PublishRemoteHelperAssembly(IServerConfig server)
+        public void PublishRemoteHelperAssembly(ServerConfig server)
         {
             var src = Path.Combine(Path.GetDirectoryName(GetType().Assembly.Location), "ConDep.Dsl.Remote.Helpers.dll");
             CopyFile(src, server, _settings);
@@ -65,13 +65,13 @@ namespace ConDep.Dsl.Remote
             }
         }
 
-        private void CopyFile(string srcPath, IServerConfig server, ConDepSettings settings)
+        private void CopyFile(string srcPath, ServerConfig server, ConDepSettings settings)
         {
             var dstPath = Path.Combine(server.GetServerInfo().TempFolderDos, Path.GetFileName(srcPath));
             CopyFile(srcPath, dstPath, server, settings);
         }
 
-        private void CopyFile(string srcPath, string dstPath, IServerConfig server, ConDepSettings settings)
+        private void CopyFile(string srcPath, string dstPath, ServerConfig server, ConDepSettings settings)
         {
             var filePublisher = new FilePublisher();
             filePublisher.PublishFile(srcPath, dstPath, server, settings);

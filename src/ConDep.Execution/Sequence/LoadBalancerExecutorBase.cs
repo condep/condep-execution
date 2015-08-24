@@ -9,10 +9,10 @@ namespace ConDep.Dsl.Sequence
 {
     public abstract class LoadBalancerExecutorBase
     {
-        public abstract void BringOffline(IServerConfig server, IReportStatus status, ConDepSettings settings, CancellationToken token);
-        public abstract void BringOnline(IServerConfig server, IReportStatus status, ConDepSettings settings, CancellationToken token);
+        public abstract void BringOffline(ServerConfig server, IReportStatus status, ConDepSettings settings, CancellationToken token);
+        public abstract void BringOnline(ServerConfig server, IReportStatus status, ConDepSettings settings, CancellationToken token);
 
-        public virtual IEnumerable<IServerConfig> GetServerExecutionOrder(IReportStatus status, ConDepSettings settings, CancellationToken token)
+        public virtual IEnumerable<ServerConfig> GetServerExecutionOrder(IReportStatus status, ConDepSettings settings, CancellationToken token)
         {
             var servers = settings.Config.Servers;
             if (settings.Options.StopAfterMarkedServer)
@@ -25,43 +25,43 @@ namespace ConDep.Dsl.Sequence
                 var markedServer = servers.SingleOrDefault(x => x.StopServer) ?? servers.First();
                 BringOnline(markedServer, status, settings, token);
 
-                return servers.Count == 1 ? new List<IServerConfig>() : servers.Except(new[] { markedServer });
+                return servers.Count == 1 ? new List<ServerConfig>() : servers.Except(new[] { markedServer });
             }
 
             return servers;
         }
 
-        protected void BringOffline(IServerConfig server, IReportStatus status, ConDepSettings settings, ILoadBalance loadBalancer, CancellationToken token)
+        protected void BringOffline(ServerConfig server, IReportStatus status, ConDepSettings settings, ILoadBalance loadBalancer, CancellationToken token)
         {
             if (settings.Config.LoadBalancer == null) return;
-            if (((IServerConfig)server).LoadBalancerState.CurrentState == LoadBalanceState.Offline) return;
+            if (server.LoadBalancerState.CurrentState == LoadBalanceState.Offline) return;
 
             Logger.WithLogSection(string.Format("Taking server [{0}] offline in load balancer.", server.Name), () =>
             {
                 loadBalancer.BringOffline(server.Name, server.LoadBalancerFarm, LoadBalancerSuspendMethod.Suspend, status);
-                ((IServerConfig)server).LoadBalancerState.CurrentState = LoadBalanceState.Offline;
+                server.LoadBalancerState.CurrentState = LoadBalanceState.Offline;
             });
 
         }
-        protected void BringOnline(IServerConfig server, IReportStatus status, ConDepSettings settings, ILoadBalance loadBalancer, CancellationToken token)
+        protected void BringOnline(ServerConfig server, IReportStatus status, ConDepSettings settings, ILoadBalance loadBalancer, CancellationToken token)
         {
             if (settings.Config.LoadBalancer == null) return;
-            if (((IServerConfig)server).LoadBalancerState.CurrentState == LoadBalanceState.Online) return;
+            if (server.LoadBalancerState.CurrentState == LoadBalanceState.Online) return;
 
             Logger.WithLogSection(string.Format("Taking server [{0}] online in load balancer.", server.Name), () =>
             {
                 loadBalancer.BringOnline(server.Name, server.LoadBalancerFarm, status);
-                ((IServerConfig)server).LoadBalancerState.CurrentState = LoadBalanceState.Online;
+                server.LoadBalancerState.CurrentState = LoadBalanceState.Online;
             });
 
         }
 
-        public void DryRunBringOnline(IServerConfig server)
+        public void DryRunBringOnline(ServerConfig server)
         {
             Logger.Info(string.Format("Taking server [{0}] online in load balancer.", server.Name));
         }
 
-        public void DryRunBringOffline(IServerConfig server)
+        public void DryRunBringOffline(ServerConfig server)
         {
             Logger.Info(string.Format("Taking server [{0}] offline in load balancer.", server.Name));
         }

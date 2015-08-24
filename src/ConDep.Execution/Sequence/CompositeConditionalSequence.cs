@@ -26,7 +26,7 @@ namespace ConDep.Dsl.Sequence
             _conditionScript = conditionScript;
         }
 
-        public override void Execute(IServerConfig server, IReportStatus status, ConDepSettings settings, CancellationToken token)
+        public override void Execute(ServerConfig server, IReportStatus status, ConDepSettings settings, CancellationToken token)
         {
             Logger.WithLogSection(Name, () =>
             {
@@ -50,7 +50,7 @@ namespace ConDep.Dsl.Sequence
             get { return "Condition"; }
         }
 
-        private bool ConditionFulfilled(IServerConfig server)
+        private bool ConditionFulfilled(ServerConfig server)
         {
             if (string.IsNullOrEmpty(_conditionScript))
             {

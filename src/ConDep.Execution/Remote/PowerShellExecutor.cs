@@ -14,7 +14,7 @@ namespace ConDep.Dsl.Remote
     {
         protected const string SHELL_URI = "http://schemas.microsoft.com/powershell/Microsoft.PowerShell";
 
-        public IEnumerable<dynamic> ExecuteLocal(IServerConfig localServer, string commandOrScript, Action<PowerShellModulesToLoad> modulesToLoad = null, IEnumerable<CommandParameter> parameters = null, bool logOutput = true)
+        public IEnumerable<dynamic> ExecuteLocal(ServerConfig localServer, string commandOrScript, Action<PowerShellModulesToLoad> modulesToLoad = null, IEnumerable<CommandParameter> parameters = null, bool logOutput = true)
         {
             var connectionInfo = new WSManConnectionInfo();
             var modules = new PowerShellModulesToLoad();
@@ -27,7 +27,7 @@ namespace ConDep.Dsl.Remote
             return ExecuteCommand(commandOrScript, connectionInfo, modules, folders, parameters, logOutput);
         }
 
-        public IEnumerable<dynamic> Execute(IServerConfig server, string commandOrScript, Action<PowerShellModulesToLoad> modulesToLoad = null, IEnumerable<CommandParameter> parameters = null, bool logOutput = true)
+        public IEnumerable<dynamic> Execute(ServerConfig server, string commandOrScript, Action<PowerShellModulesToLoad> modulesToLoad = null, IEnumerable<CommandParameter> parameters = null, bool logOutput = true)
         {
             var folders = new RemoteScriptFolders(server);
             var modules = new PowerShellModulesToLoad();
@@ -53,7 +53,7 @@ namespace ConDep.Dsl.Remote
 
         public bool UseCredSSP { get; set; }
 
-        private int ResolvePort(IServerConfig server)
+        private int ResolvePort(ServerConfig server)
         {
             if (server.PowerShell.SSL && server.PowerShell.HttpsPort != null)
             {
@@ -181,7 +181,7 @@ namespace ConDep.Dsl.Remote
         {
         }
 
-        public RemoteScriptFolders(IServerConfig server)
+        public RemoteScriptFolders(ServerConfig server)
         {
             PSTempFolder = server.GetServerInfo().TempFolderPowerShell;
             NodeScriptFolder = server.GetServerInfo().ConDepNodeScriptsFolder;

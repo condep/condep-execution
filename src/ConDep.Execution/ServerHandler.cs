@@ -7,7 +7,7 @@ namespace ConDep.Dsl.Execution
 {
     internal class ServerHandler : IDiscoverServers
     {
-        public IEnumerable<IServerConfig> GetServers(IProvideArtifact application, ConDepSettings settings)
+        public IEnumerable<ServerConfig> GetServers(IProvideArtifact application, ConDepSettings settings)
         {
             if (settings.Config.UsingTiers)
             {

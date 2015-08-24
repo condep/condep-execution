@@ -19,13 +19,13 @@ namespace ConDep.Dsl.Sequence
 
     internal class ExecutionSequenceManager : IValidate, IManageExecutionSequence
     {
-        private readonly IEnumerable<IServerConfig> _servers;
+        private readonly IEnumerable<ServerConfig> _servers;
         private readonly ILoadBalance _loadBalancer;
         internal readonly List<IOfferLocalSequence> _localSequences = new List<IOfferLocalSequence>();
         internal readonly List<IOfferRemoteSequence> _remoteSequences = new List<IOfferRemoteSequence>();
         private readonly LoadBalancerExecutorBase _internalLoadBalancer;
 
-        public ExecutionSequenceManager(IEnumerable<IServerConfig> servers, ILoadBalance loadBalancer)
+        public ExecutionSequenceManager(IEnumerable<ServerConfig> servers, ILoadBalance loadBalancer)
         {
             _servers = servers;
             _loadBalancer = loadBalancer;

@@ -8,7 +8,7 @@ namespace ConDep.Dsl
 {
     internal class PostRemoteOps : IExecuteRemotely
     {
-        public void Execute(IServerConfig server, IReportStatus status, ConDepSettings settings, CancellationToken token)
+        public void Execute(ServerConfig server, IReportStatus status, ConDepSettings settings, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
 

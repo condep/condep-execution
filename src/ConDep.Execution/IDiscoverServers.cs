@@ -5,6 +5,6 @@ namespace ConDep.Dsl.Execution
 {
     public interface IDiscoverServers
     {
-        IEnumerable<IServerConfig> GetServers(IProvideArtifact application, ConDepSettings settings);
+        IEnumerable<ServerConfig> GetServers(IProvideArtifact application, ConDepSettings settings);
     }
 }

@@ -15,16 +15,16 @@ namespace ConDep.Dsl.Sequence
             _loadBalancer = loadBalancer;
         }
 
-        public override void BringOffline(IServerConfig server, IReportStatus status, ConDepSettings settings, CancellationToken token)
+        public override void BringOffline(ServerConfig server, IReportStatus status, ConDepSettings settings, CancellationToken token)
         {
-            if (((IServerConfig)server).LoadBalancerState.CurrentState == LoadBalanceState.Offline) return;
+            if (server.LoadBalancerState.CurrentState == LoadBalanceState.Offline) return;
 
             BringOffline(server, status, settings, _loadBalancer, token);
         }
 
-        public override void BringOnline(IServerConfig server, IReportStatus status, ConDepSettings settings, CancellationToken token)
+        public override void BringOnline(ServerConfig server, IReportStatus status, ConDepSettings settings, CancellationToken token)
         {
-            if (((IServerConfig)server).LoadBalancerState.CurrentState == LoadBalanceState.Online) return;
+            if (server.LoadBalancerState.CurrentState == LoadBalanceState.Online) return;
 
             BringOnline(server, status, settings, _loadBalancer, token);
         }

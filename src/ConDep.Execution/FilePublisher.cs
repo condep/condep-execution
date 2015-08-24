@@ -6,7 +6,7 @@ namespace ConDep.Dsl.Remote
 {
     internal class FilePublisher : IPublishFiles
     {
-        public void PublishFile(string srcFile, string dstFile, IServerConfig server, ConDepSettings settings)
+        public void PublishFile(string srcFile, string dstFile, ServerConfig server, ConDepSettings settings)
         {
             var api = new Api(new ConDepNodeUrl(server, settings), server.DeploymentUser.UserName, server.DeploymentUser.Password, server.Node.TimeoutInSeconds.Value * 1000);
             var result = api.SyncFile(srcFile, dstFile);
@@ -28,7 +28,7 @@ namespace ConDep.Dsl.Remote
 
         }
 
-        public void PublishDirectory(string srcDir, string dstDir, IServerConfig server, ConDepSettings settings)
+        public void PublishDirectory(string srcDir, string dstDir, ServerConfig server, ConDepSettings settings)
         {
             var api = new Api(new ConDepNodeUrl(server, settings), server.DeploymentUser.UserName, server.DeploymentUser.Password, server.Node.TimeoutInSeconds.Value * 1000);
             var result = api.SyncDir(srcDir, dstDir);
