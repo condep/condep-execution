@@ -7,8 +7,8 @@
     <ProjectGuid>{CD01357A-C6A1-426D-9BA9-B01EAA32CC62}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ConDep.Dsl.Execution</RootNamespace>
-    <AssemblyName>ConDep.Dsl.Execution</AssemblyName>
+    <RootNamespace>ConDep.Execution</RootNamespace>
+    <AssemblyName>ConDep.Execution</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
