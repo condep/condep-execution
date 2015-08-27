@@ -20,9 +20,9 @@ namespace ConDep.Dsl.Remote
         private readonly string _srcPath;
         private readonly string _destPath;
         private readonly ConDepNodeUrl _url;
-        private readonly IExecuteRemotePowerShell _psExecutor;
+        private readonly PowerShellExecutor _psExecutor;
 
-        public ConDepNodePublisher(string srcPath, string destPath, ConDepNodeUrl url, IExecuteRemotePowerShell psExecutor)
+        public ConDepNodePublisher(string srcPath, string destPath, ConDepNodeUrl url, PowerShellExecutor psExecutor)
         {
             _srcPath = srcPath;
             _destPath = destPath;

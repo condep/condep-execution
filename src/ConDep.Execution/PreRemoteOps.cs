@@ -10,10 +10,10 @@ namespace ConDep.Dsl
 {
     internal class PreRemoteOps : IExecuteRemotely
     {
-        private readonly IExecuteRemotePowerShell _psExecutor;
+        private readonly PowerShellExecutor _psExecutor;
         const string TMP_FOLDER = @"{0}\temp\ConDep";
 
-        public PreRemoteOps(IExecuteRemotePowerShell psExecutor)
+        public PreRemoteOps(PowerShellExecutor psExecutor)
         {
             _psExecutor = psExecutor;
         }
