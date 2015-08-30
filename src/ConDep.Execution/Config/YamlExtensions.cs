@@ -1,28 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Management.Automation.Language;
-using System.Security.Cryptography.X509Certificates;
-using ConDep.Dsl.Security;
 using YamlDotNet.RepresentationModel;
 
-namespace ConDep.Dsl.Config
+namespace ConDep.Execution.Config
 {
-    public class YamlEncryptedNode
-    {
-        public YamlMappingNode Parent { get; set; }
-        public KeyValuePair<YamlNode, YamlNode> Container { get; set; }
-
-        public EncryptedValue EncryptedValue
-        {
-            get
-            {
-                return new EncryptedValue(((YamlMappingNode)Container.Value).Children[new YamlScalarNode("IV")].ToString(), ((YamlMappingNode)Container.Value).Children[new YamlScalarNode("Value")].ToString());
-            }
-        }
-    }
-
-    public static class YamlExtensions
+    internal static class YamlExtensions
     {
         private const string _encryptTag = "tag:yaml.org,2002:encrypt";
         private const string _encryptedTag = "tag:yaml.org,2002:encrypted";

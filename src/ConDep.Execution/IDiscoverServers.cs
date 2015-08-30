@@ -1,7 +1,8 @@
 using System.Collections.Generic;
+using ConDep.Dsl;
 using ConDep.Dsl.Config;
 
-namespace ConDep.Dsl.Execution
+namespace ConDep.Execution
 {
     public interface IDiscoverServers
     {

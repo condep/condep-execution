@@ -1,8 +1,8 @@
 using System.IO;
+using ConDep.Dsl.Config;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
-namespace ConDep.Dsl.Config
+namespace ConDep.Execution.Config
 {
     public class ConfigJsonSerializer : ISerializerConDepConfig
     {

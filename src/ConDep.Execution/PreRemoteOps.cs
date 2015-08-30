@@ -1,12 +1,13 @@
 ﻿using System.IO;
 using System.Reflection;
 using System.Threading;
+using ConDep.Dsl;
 using ConDep.Dsl.Config;
 using ConDep.Dsl.Logging;
 using ConDep.Dsl.Remote;
 using ConDep.Dsl.Validation;
 
-namespace ConDep.Dsl
+namespace ConDep.Execution
 {
     internal class PreRemoteOps : IExecuteRemotely
     {

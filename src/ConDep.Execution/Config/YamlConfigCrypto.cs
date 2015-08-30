@@ -2,15 +2,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using ConDep.Dsl.Security;
-using YamlDotNet.Core;
-using YamlDotNet.Core.Events;
+using ConDep.Execution.Security;
 using YamlDotNet.RepresentationModel;
 using YamlDotNet.Serialization;
-using YamlDotNet.Serialization.EventEmitters;
-using YamlDotNet.Serialization.ObjectGraphVisitors;
 
-namespace ConDep.Dsl.Config
+namespace ConDep.Execution.Config
 {
     public class YamlConfigCrypto : IHandleConfigCrypto
     {

@@ -1,8 +1,10 @@
 using System;
 using System.Linq;
+using ConDep.Dsl;
 using ConDep.Dsl.Config;
+using ConDep.Execution.Config;
 
-namespace ConDep.Dsl.Execution
+namespace ConDep.Execution
 {
     internal class ArtifactHandler : IDiscoverArtifacts
     {

@@ -1,6 +1,6 @@
 using System.IO;
 
-namespace ConDep.Dsl.Config
+namespace ConDep.Execution.Config
 {
     public class ConDepFileReader 
     {

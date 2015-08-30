@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Linq;
+using ConDep.Dsl;
 using ConDep.Dsl.Config;
+using ConDep.Dsl.LoadBalancer;
+using ConDep.Execution.Config;
 
-namespace ConDep.Dsl.LoadBalancer
+namespace ConDep.Execution
 {
     internal class LoadBalancerLookup : ILookupLoadBalancer
     {

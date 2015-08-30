@@ -1,6 +1,7 @@
 using System.IO;
+using ConDep.Dsl.Config;
 
-namespace ConDep.Dsl.Config
+namespace ConDep.Execution.Config
 {
     public interface ISerializerConDepConfig
     {

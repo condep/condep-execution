@@ -1,10 +1,10 @@
 using System;
-using System.Diagnostics;
 using System.Text;
+using ConDep.Dsl.Logging;
 using log4net;
 using log4net.Core;
 
-namespace ConDep.Dsl.Logging
+namespace ConDep.Execution.Logging
 {
     public class TeamCityLogger : Log4NetLoggerBase
     {

@@ -1,9 +1,10 @@
 ﻿using System.Linq;
+using ConDep.Dsl;
 using ConDep.Dsl.Builders;
 using ConDep.Dsl.Config;
 using ConDep.Dsl.Sequence;
 
-namespace ConDep.Dsl.Execution
+namespace ConDep.Execution
 {
     internal class ArtifactConfigurationHandler
     {

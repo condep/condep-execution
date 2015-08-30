@@ -2,9 +2,9 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace ConDep.Dsl.Security
+namespace ConDep.Execution.Security
 {
-    public class JsonPasswordCrypto
+    internal class JsonPasswordCrypto
     {
         private readonly string _key;
 

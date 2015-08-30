@@ -1,6 +1,7 @@
-﻿using ConDep.Dsl.Config;
+﻿using ConDep.Dsl;
+using ConDep.Dsl.Config;
 
-namespace ConDep.Dsl.Execution
+namespace ConDep.Execution
 {
     public interface IDiscoverArtifacts
     {

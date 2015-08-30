@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using ConDep.Dsl.Config;
-using ConDep.Dsl.Execution;
+using ConDep.Execution;
 using NUnit.Framework;
 
 namespace ConDep.Dsl.Tests

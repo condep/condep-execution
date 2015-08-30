@@ -1,8 +1,9 @@
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using ConDep.Dsl.Logging;
+using ConDep.Dsl.Validation;
 
-namespace ConDep.Dsl.Validation
+namespace ConDep.Execution.Validation
 {
     public class ClientValidator : IValidateClient
     {

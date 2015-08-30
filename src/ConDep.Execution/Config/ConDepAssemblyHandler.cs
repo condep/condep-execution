@@ -2,7 +2,7 @@
 using System.IO;
 using System.Reflection;
 
-namespace ConDep.Dsl.Config
+namespace ConDep.Execution.Config
 {
     public class ConDepAssemblyHandler
     {

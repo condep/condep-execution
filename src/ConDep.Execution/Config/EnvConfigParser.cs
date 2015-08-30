@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using ConDep.Dsl.Config;
 
-namespace ConDep.Dsl.Config
+namespace ConDep.Execution.Config
 {
     public class EnvConfigParser
     {
@@ -20,11 +21,6 @@ namespace ConDep.Dsl.Config
 
         public ConDepEnvConfig GetTypedEnvConfig(string filePath, string cryptoKey)
         {
-            if (!File.Exists(filePath))
-            {
-                throw new FileNotFoundException(string.Format("[{0}] not found.", filePath), filePath);
-            }
-
             using (var fileStream = File.OpenRead(filePath))
             {
                 return GetTypedEnvConfig(fileStream, cryptoKey);

@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using ConDep.Dsl.Config;
 
-namespace ConDep.Dsl.Config
+namespace ConDep.Execution.Config
 {
     public static class Extensions
     {

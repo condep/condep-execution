@@ -5,10 +5,10 @@ using System.Linq;
 using ConDep.Dsl.Config;
 using ConDep.Dsl.Harvesters;
 using ConDep.Dsl.Logging;
+using ConDep.Dsl.Remote;
 using ConDep.Dsl.Validation;
-using Newtonsoft.Json.Linq;
 
-namespace ConDep.Dsl.Remote
+namespace ConDep.Execution.Validation
 {
     public class RemoteServerValidator : IValidateServer
     {

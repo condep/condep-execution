@@ -1,26 +1,30 @@
 using System;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
-using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
+using ConDep.Dsl;
 using ConDep.Dsl.Config;
 using ConDep.Dsl.Harvesters;
-using ConDep.Dsl.LoadBalancer;
 using ConDep.Dsl.Logging;
 using ConDep.Dsl.Remote;
 using ConDep.Dsl.Sequence;
 using ConDep.Dsl.Validation;
+using ConDep.Execution.Config;
+using ConDep.Execution.Validation;
 using Ionic.Zip;
 
-namespace ConDep.Dsl.Execution
+namespace ConDep.Execution
 {
     public class ExecutionDownloader
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="artifact"></param>
+        /// <param name="targetPath"></param>
         public void DownloadAndUnZip(DeploymentArtifact artifact, string targetPath)
         {
             Directory.CreateDirectory(targetPath);
@@ -253,12 +257,5 @@ namespace ConDep.Dsl.Execution
                 }
             }
         }
-    }
-
-    public class DeploymentArtifact
-    {
-        public Uri Url { get; set; }
-        public NetworkCredential Credentials { get; set; }
-        public string RelativeTargetPath { get; set; }
     }
 }

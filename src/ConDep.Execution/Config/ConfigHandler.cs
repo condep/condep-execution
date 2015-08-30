@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using ConDep.Dsl.Config;
 
-namespace ConDep.Dsl.Config
+namespace ConDep.Execution.Config
 {
     public static class ConfigHandler
     {

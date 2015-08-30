@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 
-namespace ConDep.Dsl.Remote
+namespace ConDep.Execution
 {
     internal class FileHashGenerator
     {

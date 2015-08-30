@@ -1,6 +1,6 @@
 using System;
 
-namespace ConDep.Dsl.Execution
+namespace ConDep.Execution
 {
     public class ConDepNoArtifactDefinedException : Exception
     {

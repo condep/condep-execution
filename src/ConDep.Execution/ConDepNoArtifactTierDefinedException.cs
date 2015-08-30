@@ -1,8 +1,9 @@
 using System;
 using System.Linq;
+using ConDep.Dsl;
 using ConDep.Dsl.Config;
 
-namespace ConDep.Dsl.Execution
+namespace ConDep.Execution
 {
     public class ConDepNoArtifactTierDefinedException : Exception
     {

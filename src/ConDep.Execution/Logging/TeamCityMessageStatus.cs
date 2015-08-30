@@ -1,6 +1,6 @@
-namespace ConDep.Dsl.Logging
+namespace ConDep.Execution.Logging
 {
-    public enum TeamCityMessageStatus
+    internal enum TeamCityMessageStatus
     {
         NORMAL,
         WARNING,

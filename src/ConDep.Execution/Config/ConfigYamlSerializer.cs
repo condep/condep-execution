@@ -1,7 +1,8 @@
 using System.IO;
+using ConDep.Dsl.Config;
 using YamlDotNet.Serialization;
 
-namespace ConDep.Dsl.Config
+namespace ConDep.Execution.Config
 {
     public class ConfigYamlSerializer : ISerializerConDepConfig
     {

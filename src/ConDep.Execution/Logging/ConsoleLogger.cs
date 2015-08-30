@@ -2,9 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using ConDep.Dsl.Logging;
 using log4net;
 
-namespace ConDep.Dsl.Logging
+namespace ConDep.Execution.Logging
 {
     public class ConsoleLogger : Log4NetLoggerBase
     {

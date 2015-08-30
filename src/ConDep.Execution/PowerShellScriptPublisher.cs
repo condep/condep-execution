@@ -8,7 +8,7 @@ using ConDep.Dsl.Config;
 using ConDep.Dsl.PSScripts.ConDep;
 using ConDep.Dsl.Resources;
 
-namespace ConDep.Dsl.Remote
+namespace ConDep.Execution
 {
     internal class PowerShellScriptPublisher
     {

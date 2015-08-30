@@ -1,8 +1,10 @@
-﻿using ConDep.Dsl.Config;
+﻿using ConDep.Dsl;
+using ConDep.Dsl.Config;
 using ConDep.Dsl.Logging;
+using ConDep.Dsl.Remote;
 using ConDep.Dsl.Remote.Node;
 
-namespace ConDep.Dsl.Remote
+namespace ConDep.Execution
 {
     internal class FilePublisher : IPublishFiles
     {

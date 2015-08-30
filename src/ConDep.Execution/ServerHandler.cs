@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ConDep.Dsl;
 using ConDep.Dsl.Config;
 
-namespace ConDep.Dsl.Execution
+namespace ConDep.Execution
 {
     internal class ServerHandler : IDiscoverServers
     {

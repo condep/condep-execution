@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
-using ConDep.Dsl.Security;
+using ConDep.Execution.Security;
 using Newtonsoft.Json.Linq;
 
-namespace ConDep.Dsl.Config
+namespace ConDep.Execution.Config
 {
     public static class JsonExtensions
     {

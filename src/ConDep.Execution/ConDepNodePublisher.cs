@@ -7,13 +7,14 @@ using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using System.Text.RegularExpressions;
 using System.Threading;
+using ConDep.Dsl;
 using ConDep.Dsl.Config;
 using ConDep.Dsl.Logging;
 using ConDep.Dsl.PSScripts.ConDepNode;
-using ConDep.Dsl.PSScripts.PfxInstaller;
+using ConDep.Dsl.Remote;
 using ConDep.Dsl.Resources;
 
-namespace ConDep.Dsl.Remote
+namespace ConDep.Execution
 {
     public class ConDepNodePublisher
     {
@@ -99,7 +100,7 @@ namespace ConDep.Dsl.Remote
 
         public bool ValidateNode(ConDepNodeUrl url, string userName, string password, ServerConfig server)
         {
-            var api = new Node.Api(url, userName, password, server.Node.TimeoutInSeconds.Value * 1000);
+            var api = new Dsl.Remote.Node.Api(url, userName, password, server.Node.TimeoutInSeconds.Value * 1000);
             if (!api.Validate())
             {
                 Thread.Sleep(1000);
