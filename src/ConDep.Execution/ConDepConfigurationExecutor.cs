@@ -52,24 +52,33 @@ namespace ConDep.Execution
 
         public static ConDepExecutionResult DownloadAndExecute(ExecutionArtifact appArtifact, ExecutionArtifact conDepArtifact, ConDepOptions options, CancellationToken token)
         {
-            options.ValidateMandatoryOptions();
-
-            var tmpFolder = Path.Combine(Environment.ExpandEnvironmentVariables("%windir%"), "temp", "ConDepRelay-" + Guid.NewGuid());
-            var downloader = new ExecutionDownloader();
-
-            downloader.DownloadAndUnZip(appArtifact, tmpFolder);
-            downloader.DownloadAndUnZip(conDepArtifact, tmpFolder);
-
-            var configAssemblyLoader = new ConDepAssemblyHandler(options.AssemblyName);
-            options.Assembly = configAssemblyLoader.GetAssembly();
-
-            var conDepSettings = new ConDepSettings
+            try
             {
-                Options = options
-            };
-            conDepSettings.Config = ConfigHandler.GetEnvConfig(conDepSettings);
+                options.ValidateMandatoryOptions();
 
-            return ExecuteFromAssembly(conDepSettings, token);
+                var tmpFolder = Path.Combine(Environment.ExpandEnvironmentVariables("%windir%"), "temp",
+                    "ConDepRelay-" + Guid.NewGuid());
+                var downloader = new ExecutionDownloader();
+
+                downloader.DownloadAndUnZip(appArtifact, tmpFolder);
+                downloader.DownloadAndUnZip(conDepArtifact, tmpFolder);
+
+                var configAssemblyLoader = new ConDepAssemblyHandler(options.AssemblyName);
+                options.Assembly = configAssemblyLoader.GetAssembly();
+
+                var conDepSettings = new ConDepSettings
+                {
+                    Options = options
+                };
+                conDepSettings.Config = ConfigHandler.GetEnvConfig(conDepSettings);
+                return ExecuteFromAssembly(conDepSettings, token);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex.Message, ex);
+                return new ConDepExecutionResult(false);
+            }
+
         }
 
         public static ConDepExecutionResult ExecuteFromAssembly(ConDepSettings conDepSettings, CancellationToken token)
