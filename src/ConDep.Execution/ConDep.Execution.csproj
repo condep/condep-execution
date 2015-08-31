@@ -108,7 +108,7 @@
     <Compile Include="Config\YamlConfigCrypto.cs" />
     <Compile Include="Config\YamlEncryptedNode.cs" />
     <Compile Include="Config\YamlExtensions.cs" />
-    <Compile Include="DeploymentArtifact.cs" />
+    <Compile Include="ExecutionArtifact.cs" />
     <Compile Include="FileHashGenerator.cs" />
     <Compile Include="FilePublisher.cs" />
     <Compile Include="IDiscoverArtifacts.cs" />

@@ -25,7 +25,7 @@ namespace ConDep.Execution
         /// </summary>
         /// <param name="artifact"></param>
         /// <param name="targetPath"></param>
-        public void DownloadAndUnZip(DeploymentArtifact artifact, string targetPath)
+        public void DownloadAndUnZip(ExecutionArtifact artifact, string targetPath)
         {
             Directory.CreateDirectory(targetPath);
 
@@ -50,7 +50,7 @@ namespace ConDep.Execution
         private bool _cancelled;
         private bool _serverNodeInstalled;
 
-        public static ConDepExecutionResult DownloadAndExecute(DeploymentArtifact appArtifact, DeploymentArtifact conDepArtifact, ConDepOptions options, CancellationToken token)
+        public static ConDepExecutionResult DownloadAndExecute(ExecutionArtifact appArtifact, ExecutionArtifact conDepArtifact, ConDepOptions options, CancellationToken token)
         {
             options.ValidateMandatoryOptions();
 
