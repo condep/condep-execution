@@ -14,71 +14,89 @@ using ConDep.Dsl.Sequence;
 using ConDep.Dsl.Validation;
 using ConDep.Execution.Config;
 using ConDep.Execution.Validation;
-using Ionic.Zip;
 
 namespace ConDep.Execution
 {
-    public class ExecutionDownloader
-    {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="artifact"></param>
-        /// <param name="targetPath"></param>
-        public void DownloadAndUnZip(ExecutionArtifact artifact, string targetPath)
-        {
-            Directory.CreateDirectory(targetPath);
-
-            using (var client = new WebClient()) {
-                if (artifact.Credentials != null)
-                {
-                    client.Credentials = artifact.Credentials;
-                }
-
-                client.DownloadFile(artifact.Url, targetPath);
-            }
-
-            using(var zip = new ZipFile(targetPath))
-            {
-                zip.ExtractAll(Path.Combine(targetPath, Path.Combine("extracted", artifact.RelativeTargetPath)));
-            }
-        }
-    }
-
-    public class ConDepConfigurationExecutor
+    public class ConDepConfigurationExecutor : MarshalByRefObject, ITokenSource, IDisposable
     {
         private bool _cancelled;
         private bool _serverNodeInstalled;
+        private static string _assemblySearchPath;
+        private readonly CancellationTokenSource _cts;
 
-        public static ConDepExecutionResult DownloadAndExecute(ExecutionArtifact appArtifact, ExecutionArtifact conDepArtifact, ConDepOptions options, CancellationToken token)
+        public ConDepConfigurationExecutor()
         {
+            _cts = new CancellationTokenSource();
+        }
+
+        //private static Assembly ResolveConDepAssemblies(object sender, ResolveEventArgs args)
+        //{
+        //    var assemblyName = args.Name.Split(',')[0];
+        //    var assemblyLocation = Path.Combine(typeof(ConDepConfigurationExecutor).Assembly.CodeBase, assemblyName);
+
+        //    if (File.Exists(assemblyLocation + ".dll"))
+        //    {
+        //        return Assembly.LoadFrom(assemblyLocation + ".dll");
+        //    }
+        //    return null;
+        //}
+
+        //private static Assembly ResolveAssemblyLocation(object sender, ResolveEventArgs args)
+        //{
+        //    var assemblyName = args.Name.Split(',')[0];
+        //    var assemblyLocation = Path.Combine(_assemblySearchPath, assemblyName);
+
+        //    if (File.Exists(assemblyLocation + ".dll"))
+        //    {
+        //        return Assembly.LoadFrom(assemblyLocation + ".dll");
+        //    }
+        //    return null;
+        //}
+
+        public ConDepExecutionResult Execute(Guid executionId, string assemblyPath, ConDepOptions options, ITokenSource token)
+        {
+            Directory.SetCurrentDirectory(Path.GetDirectoryName(assemblyPath));
+            Logger.Initialize(new RelayApiLogger(executionId));
+
+            var configAssemblyLoader = new ConDepAssemblyHandler(assemblyPath);
+            options.Assembly = configAssemblyLoader.GetAssembly();
+
+            var conDepSettings = new ConDepSettings
+            {
+                Options = options
+            };
+            conDepSettings.Config = ConfigHandler.GetEnvConfig(conDepSettings);
+
             try
             {
-                options.ValidateMandatoryOptions();
+                if (conDepSettings.Options.Assembly == null) throw new ArgumentException("assembly");
 
-                var tmpFolder = Path.Combine(Environment.ExpandEnvironmentVariables("%windir%"), "temp",
-                    "ConDepRelay-" + Guid.NewGuid());
-                var downloader = new ExecutionDownloader();
+                var lbLookup = new LoadBalancerLookup(conDepSettings.Config.LoadBalancer);
+                var artifactConfigHandler = new RunbookConfigurationHandler(new RunbookHandler(), new RunbookDependencyHandler(), new ServerHandler(), lbLookup.GetLoadBalancer());
+                var sequenceManager = artifactConfigHandler.CreateExecutionSequence(conDepSettings);
 
-                downloader.DownloadAndUnZip(appArtifact, tmpFolder);
-                downloader.DownloadAndUnZip(conDepArtifact, tmpFolder);
+                var clientValidator = new ClientValidator();
 
-                var configAssemblyLoader = new ConDepAssemblyHandler(options.AssemblyName);
-                options.Assembly = configAssemblyLoader.GetAssembly();
+                var serverInfoHarvester = HarvesterFactory.GetHarvester(conDepSettings);
+                var serverValidator = new RemoteServerValidator(conDepSettings.Config.Servers,
+                                                                serverInfoHarvester, new PowerShellExecutor());
 
-                var conDepSettings = new ConDepSettings
+
+                if (conDepSettings.Options.DryRun)
                 {
-                    Options = options
-                };
-                conDepSettings.Config = ConfigHandler.GetEnvConfig(conDepSettings);
-                return ExecuteFromAssembly(conDepSettings, token);
+                    Logger.Warn("Showing execution sequence from dry run:");
+                    sequenceManager.DryRun(conDepSettings);
+                    return new ConDepExecutionResult(true);
+                }
+
+                return Execute(conDepSettings, clientValidator, serverValidator, sequenceManager, token.Token);
             }
             catch (Exception ex)
             {
-                Logger.Error(ex.Message, ex);
+                Logger.Error("An error sneaked by.", ex);
                 return new ConDepExecutionResult(false);
+                //throw;
             }
-
         }
 
         public static ConDepExecutionResult ExecuteFromAssembly(ConDepSettings conDepSettings, CancellationToken token)
@@ -88,7 +106,7 @@ namespace ConDep.Execution
                 if (conDepSettings.Options.Assembly == null) throw new ArgumentException("assembly");
 
                 var lbLookup = new LoadBalancerLookup(conDepSettings.Config.LoadBalancer);
-                var artifactConfigHandler = new ArtifactConfigurationHandler(new ArtifactHandler(), new ArtifactDependencyHandler(), new ServerHandler(), lbLookup.GetLoadBalancer());
+                var artifactConfigHandler = new RunbookConfigurationHandler(new RunbookHandler(), new RunbookDependencyHandler(), new ServerHandler(), lbLookup.GetLoadBalancer());
                 var sequenceManager = artifactConfigHandler.CreateExecutionSequence(conDepSettings);
 
                 var clientValidator = new ClientValidator();
@@ -266,5 +284,17 @@ namespace ConDep.Execution
                 }
             }
         }
+
+        public void Dispose()
+        {
+            
+        }
+
+        public void Cancel()
+        {
+            
+        }
+
+        public CancellationToken Token { get { return _cts.Token; } }
     }
 }

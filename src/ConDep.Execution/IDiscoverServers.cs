@@ -6,6 +6,6 @@ namespace ConDep.Execution
 {
     public interface IDiscoverServers
     {
-        IEnumerable<ServerConfig> GetServers(IProvideArtifact application, ConDepSettings settings);
+        IEnumerable<ServerConfig> GetServers(IProvideRunbook runbook, ConDepSettings settings);
     }
 }

@@ -5,13 +5,13 @@ using ConDep.Dsl.Config;
 
 namespace ConDep.Execution
 {
-    public class ConDepNoArtifactTierDefinedException : Exception
+    public class ConDepNoRunbookTierDefinedException : Exception
     {
-        public ConDepNoArtifactTierDefinedException(string message) : base(message)
+        public ConDepNoRunbookTierDefinedException(string message) : base(message)
         {
         }
 
-        public ConDepNoArtifactTierDefinedException(IProvideArtifact application, ConDepSettings settings)
+        public ConDepNoRunbookTierDefinedException(IProvideRunbook application, ConDepSettings settings)
             : base(string.Format("No Tiers defined for application {0}. You need to specify a tier using the {1} attribute on the {0} class. Tiers available in your configuration are {2}.",
                 application.GetType().Name, 
                 typeof(TierAttribute).Name, 

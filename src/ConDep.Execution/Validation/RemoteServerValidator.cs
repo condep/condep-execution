@@ -44,8 +44,9 @@ namespace ConDep.Execution.Validation
                                 isValid = false;
                                 return;
                             }
+
                             Logger.WithLogSection("Collecting server data", () => _serverInfoHarvester.Harvest(currentServer));
- 
+
                             if (HaveNet40(currentServer))
                             {
                                 Logger.Info("Server requirements on [{0}] are OK.", currentServer.Name);

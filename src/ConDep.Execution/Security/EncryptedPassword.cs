@@ -1,6 +1,6 @@
 ﻿namespace ConDep.Execution.Security
 {
-    internal class EncryptedValue
+    public class EncryptedValue
     {
         public EncryptedValue(string iv, string value)
         {

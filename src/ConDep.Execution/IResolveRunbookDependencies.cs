@@ -6,13 +6,13 @@ namespace ConDep.Execution
     /// <summary>
     /// Resolves dependencies between ConDep artifacts
     /// </summary>
-    public interface IResolveArtifactDependencies
+    public interface IResolveRunbookDependencies
     {
         /// <summary>
         /// Recursively detects and populates dependency tree of Artifact dependencies
         /// </summary>
-        /// <param name="artifact"></param>
+        /// <param name="runbook"></param>
         /// <param name="settings"></param>
-        void PopulateWithDependencies(IProvideArtifact artifact, ConDepSettings settings);
+        void PopulateWithDependencies(IProvideRunbook runbook, ConDepSettings settings);
     }
 }

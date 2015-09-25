@@ -7,7 +7,6 @@ namespace ConDep.Execution.Config
 {
     public class JsonConfigCrypto : IHandleConfigCrypto
     {
-        private readonly ISerializerConDepConfig _serializer;
         private readonly JsonPasswordCrypto _valueHandler;
 
         public JsonConfigCrypto(string key)

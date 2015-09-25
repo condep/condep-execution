@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ConDep.Execution.Security
 {
-    internal class JsonPasswordCrypto
+    public class JsonPasswordCrypto
     {
         private readonly string _key;
 

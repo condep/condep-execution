@@ -7,9 +7,9 @@ namespace ConDep.Execution.Config
 {
     public class EnvConfigParser
     {
-        private readonly ISerializerConDepConfig _configSerializer;
+        private readonly ISerializeConfig<ConDepEnvConfig> _configSerializer;
 
-        public EnvConfigParser(ISerializerConDepConfig configSerializer)
+        public EnvConfigParser(ISerializeConfig<ConDepEnvConfig> configSerializer)
         {
             _configSerializer = configSerializer;
         }
@@ -19,33 +19,17 @@ namespace ConDep.Execution.Config
             File.WriteAllText(filePath, _configSerializer.Serialize(config));
         }
 
-        public ConDepEnvConfig GetTypedEnvConfig(string filePath, string cryptoKey)
+        public ConDepEnvConfig GetTypedEnvConfig(string filePath)
         {
             using (var fileStream = File.OpenRead(filePath))
             {
-                return GetTypedEnvConfig(fileStream, cryptoKey);
+                return GetTypedEnvConfig(fileStream);
             }
         }
 
-        public ConDepEnvConfig GetTypedEnvConfig(Stream stream, string cryptoKey)
+        public ConDepEnvConfig GetTypedEnvConfig(Stream stream)
         {
             ConDepEnvConfig config = _configSerializer.DeSerialize(stream);
-
-            //if (Encrypted(json, out jsonModel))
-            //{
-            //    if (string.IsNullOrWhiteSpace(cryptoKey))
-            //    {
-            //        throw new ConDepCryptoException(
-            //            "ConDep configuration is encrypted, so a decryption key is needed. Specify using -k switch.");
-            //    }
-            //    var crypto = new JsonPasswordCrypto(cryptoKey);
-            //    DecryptJsonConfig(jsonModel, crypto);
-            //    config = ((JObject)jsonModel).ToObject<ConDepEnvConfig>();
-            //}
-            //else
-            //{
-            //    config = JsonConvert.DeserializeObject<ConDepEnvConfig>(json, JsonSettings);
-            //}
 
             if (config.Servers != null && config.Tiers != null)
                 throw new ConDepConfigurationException(

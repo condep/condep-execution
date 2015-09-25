@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{4BC76D5E
 		..\build\default.ps1 = ..\build\default.ps1
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConDep.Execution.Contained", "ConDep.Execution.Contained\ConDep.Execution.Contained.csproj", "{D52AC10A-BBD1-416D-A21B-65B3A5BF742E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{17BACC70-A7FC-444F-9071-01D5994732CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{17BACC70-A7FC-444F-9071-01D5994732CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{17BACC70-A7FC-444F-9071-01D5994732CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D52AC10A-BBD1-416D-A21B-65B3A5BF742E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D52AC10A-BBD1-416D-A21B-65B3A5BF742E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D52AC10A-BBD1-416D-A21B-65B3A5BF742E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D52AC10A-BBD1-416D-A21B-65B3A5BF742E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,19 +1,18 @@
 using System.IO;
-using ConDep.Dsl.Config;
 using YamlDotNet.Serialization;
 
 namespace ConDep.Execution.Config
 {
-    public class ConfigYamlSerializer : ISerializerConDepConfig
+    public class YamlSerializer<T> : ISerializeConfig<T>
     {
         private readonly IHandleConfigCrypto _crypto;
 
-        public ConfigYamlSerializer(IHandleConfigCrypto crypto)
+        public YamlSerializer(IHandleConfigCrypto crypto)
         {
             _crypto = crypto;
         }
 
-        public string Serialize(ConDepEnvConfig config)
+        public string Serialize(T config)
         {
             using (var stringWriter = new StringWriter())
             {
@@ -23,23 +22,23 @@ namespace ConDep.Execution.Config
             }
         }
 
-        public ConDepEnvConfig DeSerialize(Stream stream)
+        public T DeSerialize(Stream stream)
         {
             using (var reader = new StreamReader(stream))
             {
                 var deserialize = new Deserializer(ignoreUnmatched: true);
                 deserialize.RegisterTagMapping("tag:yaml.org,2002:encrypt", typeof(string));
-                return deserialize.Deserialize<ConDepEnvConfig>(reader);
+                return deserialize.Deserialize<T>(reader);
             }
         }
 
-        public ConDepEnvConfig DeSerialize(string config)
+        public T DeSerialize(string config)
         {
             using (var stringReader = new StringReader(config))
             {
                 var deserialize = new Deserializer(ignoreUnmatched: true);
                 deserialize.RegisterTagMapping("tag:yaml.org,2002:encrypt", typeof(string));
-                return deserialize.Deserialize<ConDepEnvConfig>(stringReader);
+                return deserialize.Deserialize<T>(stringReader);
             }
         }
     }

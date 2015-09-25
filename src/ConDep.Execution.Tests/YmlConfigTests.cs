@@ -125,7 +125,7 @@ OperationsConfig :
         public void TestThat_YamlCanBeLoadedIntoModel()
         {
             var key = JsonPasswordCrypto.GenerateKey(256);
-            var serializer = new ConfigYamlSerializer(new YamlConfigCrypto(key));
+            var serializer = new YamlSerializer<ConDepEnvConfig>(new YamlConfigCrypto(key));
 
             var condepConfig = serializer.DeSerialize(_yml);
         }

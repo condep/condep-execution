@@ -10,9 +10,10 @@ using System.Threading;
 using ConDep.Dsl;
 using ConDep.Dsl.Config;
 using ConDep.Dsl.Logging;
-using ConDep.Dsl.PSScripts.ConDepNode;
 using ConDep.Dsl.Remote;
 using ConDep.Dsl.Resources;
+using ConDep.Execution.PSScripts.ConDepNode;
+using ConDepResourceFiles = ConDep.Execution.Resources.ConDepResourceFiles;
 
 namespace ConDep.Execution
 {

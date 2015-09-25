@@ -31,9 +31,9 @@
     <DocumentationFile>bin\Release\ConDep.Execution.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ConDep.Dsl, Version=4.0.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ConDep.Dsl.4.0.4-beta\lib\net40\ConDep.Dsl.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="ConDep.Dsl, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\condep-dsl\src\ConDep.Dsl\bin\Debug\ConDep.Dsl.dll</HintPath>
     </Reference>
     <Reference Include="Ionic.Zip, Version=1.9.6.0, Culture=neutral, PublicKeyToken=6583c7c814667745, processorArchitecture=MSIL">
       <HintPath>..\packages\DotNetZip.1.9.6\lib\net20\Ionic.Zip.dll</HintPath>
@@ -41,6 +41,14 @@
     </Reference>
     <Reference Include="log4net, Version=1.2.11.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.2.0.0\lib\net40-full\log4net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.ServiceBus, Version=2.7.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\WindowsAzure.ServiceBus.2.7.6\lib\net40-full\Microsoft.ServiceBus.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAzure.Configuration, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.WindowsAzure.ConfigurationManager.3.1.0\lib\net40\Microsoft.WindowsAzure.Configuration.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -53,6 +61,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IdentityModel" />
     <Reference Include="System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Windows\Microsoft.NET\assembly\GAC_MSIL\System.Management.Automation\v4.0_3.0.0.0__31bf3856ad364e35\System.Management.Automation.dll</HintPath>
@@ -69,6 +78,9 @@
       <HintPath>..\packages\Microsoft.Net.Http.2.0.20710.0\lib\net40\System.Net.Http.WebRequest.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Web" />
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -76,18 +88,31 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="YamlDotNet, Version=3.5.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\YamlDotNet.3.5.1\lib\net35\YamlDotNet.dll</HintPath>
-      <Private>True</Private>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\YamlDotNet.3.7.0\lib\net35\YamlDotNet.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArtifactConfigurationHandler.cs" />
-    <Compile Include="ArtifactDependencyHandler.cs" />
-    <Compile Include="ArtifactHandler.cs" />
+    <Compile Include="Config\ArtifactManifest.cs" />
+    <Compile Include="Config\ArtifactManifestConfigParser.cs" />
+    <Compile Include="Config\ArtifactManifestJsonSerializer.cs" />
+    <Compile Include="Config\ISerializeArtifactManifest.cs" />
+    <Compile Include="Config\ISerializeConfig.cs" />
+    <Compile Include="Config\JsonSerializer.cs" />
+    <Compile Include="PSScripts\ConDepNode\ConDepNodeResources.cs" />
+    <Compile Include="PSScripts\ConDep\ConDepResources.cs" />
+    <Compile Include="PSScripts\PowerShellResources.cs" />
+    <Compile Include="Relay\RelayConfig.cs" />
+    <Compile Include="Relay\RelayHandler.cs" />
+    <Compile Include="Resources\ConDepResourceFiles.cs" />
+    <Compile Include="Resources\ConDepResourceNotFoundException.cs" />
+    <Compile Include="RunbookConfigurationHandler.cs" />
+    <Compile Include="RunbookDependencyHandler.cs" />
+    <Compile Include="RunbookHandler.cs" />
     <Compile Include="ConDepConfigurationExecutor.cs" />
     <Compile Include="ConDepExecutionResult.cs" />
-    <Compile Include="ConDepNoArtifactDefinedException.cs" />
-    <Compile Include="ConDepNoArtifactTierDefinedException.cs" />
+    <Compile Include="ConDepNoRunbookDefinedException.cs" />
+    <Compile Include="ConDepNoRunbookTierDefinedException.cs" />
     <Compile Include="ConDepNodePublisher.cs" />
     <Compile Include="ConDepTierDoesNotExistInConfigException.cs" />
     <Compile Include="Config\ConDepAssemblyHandler.cs" />
@@ -97,23 +122,23 @@
     <Compile Include="Config\ConDepFileReader.cs" />
     <Compile Include="Config\ConDepNoServersFoundException.cs" />
     <Compile Include="Config\ConfigHandler.cs" />
-    <Compile Include="Config\ConfigJsonSerializer.cs" />
-    <Compile Include="Config\ConfigYamlSerializer.cs" />
+    <Compile Include="Config\YamlSerializer.cs" />
     <Compile Include="Config\EnvConfigParser.cs" />
     <Compile Include="Config\Extensions.cs" />
     <Compile Include="Config\IHandleConfigCrypto.cs" />
-    <Compile Include="Config\ISerializerConDepConfig.cs" />
     <Compile Include="Config\JsonConfigCrypto.cs" />
     <Compile Include="Config\JsonExtensions.cs" />
     <Compile Include="Config\YamlConfigCrypto.cs" />
     <Compile Include="Config\YamlEncryptedNode.cs" />
     <Compile Include="Config\YamlExtensions.cs" />
-    <Compile Include="ExecutionArtifact.cs" />
+    <Compile Include="Relay\DataContracts.cs" />
     <Compile Include="FileHashGenerator.cs" />
     <Compile Include="FilePublisher.cs" />
-    <Compile Include="IDiscoverArtifacts.cs" />
+    <Compile Include="IDiscoverRunbooks.cs" />
     <Compile Include="IDiscoverServers.cs" />
-    <Compile Include="IResolveArtifactDependencies.cs" />
+    <Compile Include="Relay\IOfferCommandRelay.cs" />
+    <Compile Include="IResolveRunbookDependencies.cs" />
+    <Compile Include="ITokenSource.cs" />
     <Compile Include="LoadBalancerLookup.cs" />
     <Compile Include="Logging\ConsoleLogger.cs" />
     <Compile Include="Logging\LogResolver.cs" />
@@ -123,6 +148,8 @@
     <Compile Include="PowerShellScriptPublisher.cs" />
     <Compile Include="PreRemoteOps.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RelayApiLogger.cs" />
+    <Compile Include="Relay\LogStream.cs" />
     <Compile Include="Security\ConDepCryptoException.cs" />
     <Compile Include="Security\EncryptedPassword.cs" />
     <Compile Include="Security\JsonPasswordCrypto.cs" />
@@ -133,9 +160,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
+    <EmbeddedResource Include="PSScripts\ConDepNode\ConDepNode.psm1" />
+    <EmbeddedResource Include="PSScripts\ConDep\ConDep.psm1" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\ConDep.Execution.Contained\ConDep.Execution.Contained.csproj">
+      <Project>{d52ac10a-bbd1-416d-a21b-65b3a5bf742e}</Project>
+      <Name>ConDep.Execution.Contained</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

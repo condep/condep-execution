@@ -37,7 +37,7 @@ namespace ConDep.Dsl.Tests
                         }
                     }
                 },
-                Options = { Assembly = typeof(MyArtifactWithTierTag).Assembly, Application = "MyArtifactWithTierTag" }
+                Options = { Assembly = typeof(MyArtifactWithTierTag).Assembly, Runbook = "MyArtifactWithTierTag" }
             };
 
             _serverSettings = new ConDepSettings
@@ -56,40 +56,40 @@ namespace ConDep.Dsl.Tests
                         }
                     }
                 },
-                Options = { Assembly = typeof(MyArtifactWithTierTag).Assembly, Application = "MyArtifactWithTierTag" }
+                Options = { Assembly = typeof(MyArtifactWithTierTag).Assembly, Runbook = "MyArtifactWithTierTag" }
             };
         }
 
         [Test]
-        [ExpectedException(typeof(ConDepNoArtifactTierDefinedException))]
+        [ExpectedException(typeof(ConDepNoRunbookTierDefinedException))]
         public void TestThat_ArtifactFailsWhenNotTaggedWithTierForTierConfig()
         {
-            var configHandler = new ArtifactConfigurationHandler(new ArtifactHandler(), new ArtifactDependencyHandler(),
+            var configHandler = new RunbookConfigurationHandler(new RunbookHandler(), new RunbookDependencyHandler(),
                 new ServerHandler(), new DefaultLoadBalancer());
 
-            _tierSettings.Options.Application = typeof (MyArtifactWithoutTierTag).Name;
+            _tierSettings.Options.Runbook = typeof (MyArtifactWithoutTierTag).Name;
             configHandler.CreateExecutionSequence(_tierSettings);
         }
 
         [Test]
         public void TestThat_ArtifactSucceedsWhenTaggedWithTierForTierConfig()
         {
-            var configHandler = new ArtifactConfigurationHandler(new ArtifactHandler(), new ArtifactDependencyHandler(),
+            var configHandler = new RunbookConfigurationHandler(new RunbookHandler(), new RunbookDependencyHandler(),
                 new ServerHandler(), new DefaultLoadBalancer());
 
-            _tierSettings.Options.Application = typeof(MyArtifactWithTierTag).Name;
+            _tierSettings.Options.Runbook = typeof(MyArtifactWithTierTag).Name;
             configHandler.CreateExecutionSequence(_tierSettings);
         }
     }
 
     [Tier(Tier.Web)]
-    public class MyArtifactWithTierTag : Artifact.Local
+    public class MyArtifactWithTierTag : Runbook.Local
     {
         public override void Configure(IOfferLocalOperations onLocalMachine, ConDepSettings settings)
         {
         }
     }
-    public class MyArtifactWithoutTierTag : Artifact.Local
+    public class MyArtifactWithoutTierTag : Runbook.Local
     {
         public override void Configure(IOfferLocalOperations onLocalMachine, ConDepSettings settings)
         {

@@ -5,8 +5,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using ConDep.Dsl.Config;
-using ConDep.Dsl.PSScripts.ConDep;
-using ConDep.Dsl.Resources;
+using ConDep.Execution.PSScripts.ConDep;
+using ConDep.Execution.Resources;
 
 namespace ConDep.Execution
 {

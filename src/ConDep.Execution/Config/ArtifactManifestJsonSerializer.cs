@@ -1,29 +1,21 @@
 using System.IO;
-using ConDep.Dsl.Config;
 using Newtonsoft.Json;
 
 namespace ConDep.Execution.Config
 {
-    public class ConfigJsonSerializer : ISerializerConDepConfig
+    public class ArtifactManifestJsonSerializer : ISerializeArtifactManifest
     {
-        private readonly IHandleConfigCrypto _crypto;
         private JsonSerializerSettings _jsonSettings;
 
-        public ConfigJsonSerializer(IHandleConfigCrypto crypto )
+        public string Serialize(ArtifactManifest manifest)
         {
-            _crypto = crypto;
+            var json = JsonConvert.SerializeObject(manifest, JsonSettings);
+            return json;
         }
 
-        public string Serialize(ConDepEnvConfig config)
+        public ArtifactManifest DeSerialize(Stream stream)
         {
-            var json = JsonConvert.SerializeObject(config, JsonSettings);
-            var encryptedJson = _crypto.Encrypt(json);
-            return encryptedJson;
-        }
-
-        public ConDepEnvConfig DeSerialize(Stream stream)
-        {
-            ConDepEnvConfig config;
+            ArtifactManifest config;
             using (var memStream = GetMemoryStreamWithCorrectEncoding(stream))
             {
                 using (var reader = new StreamReader(memStream))
@@ -35,13 +27,9 @@ namespace ConDep.Execution.Config
             return config;
         }
 
-        public ConDepEnvConfig DeSerialize(string json)
+        public ArtifactManifest DeSerialize(string config)
         {
-            if (_crypto.IsEncrypted(json))
-            {
-                json = _crypto.Decrypt(json);
-            }
-            return JsonConvert.DeserializeObject<ConDepEnvConfig>(json, JsonSettings);
+            return JsonConvert.DeserializeObject<ArtifactManifest>(config, JsonSettings);
         }
 
         private JsonSerializerSettings JsonSettings

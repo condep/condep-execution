@@ -48,7 +48,7 @@ namespace ConDep.Execution.Config
             string envFilePath;
             var jsonConfigParser = new EnvConfigParser(ResolveConfigParser(settings, out envFilePath));
 
-            var envConfig = jsonConfigParser.GetTypedEnvConfig(envFilePath, settings.Options.CryptoKey);
+            var envConfig = jsonConfigParser.GetTypedEnvConfig(envFilePath);
             envConfig.EnvironmentName = settings.Options.Environment;
 
             if (settings.Options.BypassLB)
@@ -58,7 +58,7 @@ namespace ConDep.Execution.Config
             return envConfig;
         }
 
-        public static ISerializerConDepConfig ResolveConfigParser(ConDepSettings settings, out string filePath)
+        public static ISerializeConfig<ConDepEnvConfig> ResolveConfigParser(ConDepSettings settings, out string filePath)
         {
             var searchDir = Path.GetDirectoryName(settings.Options.Assembly.Location);
             var searchPattern = string.Format("{0}.env.*", settings.Options.Environment);
@@ -84,7 +84,7 @@ namespace ConDep.Execution.Config
             return ResolveConfigParser(filePath, settings.Options.CryptoKey);
         }
 
-        public static ISerializerConDepConfig ResolveConfigParser(string filePath, string cryptoKey)
+        public static ISerializeConfig<ConDepEnvConfig> ResolveConfigParser(string filePath, string cryptoKey)
         {
             if (!File.Exists(filePath)) throw new FileNotFoundException(string.Format("File [{0}] not found.", filePath));
 
@@ -93,10 +93,10 @@ namespace ConDep.Execution.Config
             switch (fileInfo.Extension.ToLower())
             {
                 case ".json":
-                    return new ConfigJsonSerializer(new JsonConfigCrypto(cryptoKey));
+                    return new JsonSerializer<ConDepEnvConfig>(new JsonConfigCrypto(cryptoKey));
                 case ".yml":
                 case ".yaml":
-                    return new ConfigYamlSerializer(new JsonConfigCrypto(cryptoKey));
+                    return new YamlSerializer<ConDepEnvConfig>(new JsonConfigCrypto(cryptoKey));
                 default:
                     throw new FileNotFoundException();
             }

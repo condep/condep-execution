@@ -11,21 +11,21 @@ namespace ConDep.Dsl.Tests
         [Test]
         public void TestThat_ArtifactWithDependencyIsDetected()
         {
-            var dependencyHandler = new ArtifactDependencyHandler();
+            var dependencyHandler = new RunbookDependencyHandler();
             Assert.That(dependencyHandler.HasDependenciesDefined(new MyArtifactDependentOnStandardArtifact()), Is.True);
         }
 
         [Test]
         public void TestThat_ArtifactWithoutDependencyIsNotDetected()
         {
-            var dependencyHandler = new ArtifactDependencyHandler();
+            var dependencyHandler = new RunbookDependencyHandler();
             Assert.That(dependencyHandler.HasDependenciesDefined(new MyStandardArtifact1()), Is.False);
         }
 
         [Test]
         public void TestThat_ArtifactWithDependencyDetectsCorrectDependency()
         {
-            var dependencyHandler = new ArtifactDependencyHandler();
+            var dependencyHandler = new RunbookDependencyHandler();
             var settings = new ConDepSettings {Options = {Assembly = GetType().Assembly}};
 
             var artifact = new MyArtifactDependentOnStandardArtifact();
@@ -36,7 +36,7 @@ namespace ConDep.Dsl.Tests
         [Test]
         public void TestThat_ArtifactWithMultipleDependenciesReturnsCorrectDependenciesInCorrectOrder()
         {
-            var dependencyHandler = new ArtifactDependencyHandler();
+            var dependencyHandler = new RunbookDependencyHandler();
             var settings = new ConDepSettings { Options = { Assembly = GetType().Assembly } };
 
             var artifact = new MyArtifactWithMultipleDependencies();
@@ -51,7 +51,7 @@ namespace ConDep.Dsl.Tests
         [Test]
         public void TestThat_ArtifactWithHierarchicalDependenciesReturnsCorrectDependenciesInCorrectOrder()
         {
-            var dependencyHandler = new ArtifactDependencyHandler();
+            var dependencyHandler = new RunbookDependencyHandler();
             var settings = new ConDepSettings { Options = { Assembly = GetType().Assembly } };
 
             var artifact = new MyArtifactWithHierarchicalDependencies();
@@ -65,7 +65,7 @@ namespace ConDep.Dsl.Tests
         }
     }
 
-    public class MyStandardArtifact1 : Artifact.Local
+    public class MyStandardArtifact1 : Runbook.Local
     {
         public override void Configure(IOfferLocalOperations onLocalMachine, ConDepSettings settings)
         {
@@ -73,7 +73,7 @@ namespace ConDep.Dsl.Tests
         }
     }
 
-    public class MyStandardArtifact2 : Artifact.Local
+    public class MyStandardArtifact2 : Runbook.Local
     {
         public override void Configure(IOfferLocalOperations onLocalMachine, ConDepSettings settings)
         {
@@ -81,7 +81,7 @@ namespace ConDep.Dsl.Tests
         }
     }
 
-    public class MyArtifactDependentOnStandardArtifact : Artifact.Local, IDependOn<MyStandardArtifact1>
+    public class MyArtifactDependentOnStandardArtifact : Runbook.Local, IDependOn<MyStandardArtifact1>
     {
         public override void Configure(IOfferLocalOperations onLocalMachine, ConDepSettings settings)
         {
@@ -89,7 +89,7 @@ namespace ConDep.Dsl.Tests
         }
     }
 
-    public class MyArtifactWithMultipleDependencies : Artifact.Local, IDependOn<MyStandardArtifact1>, IDependOn<MyStandardArtifact2>
+    public class MyArtifactWithMultipleDependencies : Runbook.Local, IDependOn<MyStandardArtifact1>, IDependOn<MyStandardArtifact2>
     {
         public override void Configure(IOfferLocalOperations onLocalMachine, ConDepSettings settings)
         {
@@ -97,7 +97,7 @@ namespace ConDep.Dsl.Tests
         }
     }
 
-    public class MyArtifactWithHierarchicalDependencies : Artifact.Local, IDependOn<MyArtifactDependentOnStandardArtifact>
+    public class MyArtifactWithHierarchicalDependencies : Runbook.Local, IDependOn<MyArtifactDependentOnStandardArtifact>
     {
         public override void Configure(IOfferLocalOperations onLocalMachine, ConDepSettings settings)
         {

@@ -251,9 +251,9 @@ namespace ConDep.Dsl.Tests
             var tiersMemStream = new MemoryStream(Encoding.UTF8.GetBytes(_tiersJson));
 
             _cryptoKey = JsonPasswordCrypto.GenerateKey(256);
-            var parser = new EnvConfigParser(new ConfigJsonSerializer(new JsonConfigCrypto(_cryptoKey)));
-            _config = parser.GetTypedEnvConfig(memStream, null);
-            _tiersConfig = parser.GetTypedEnvConfig(tiersMemStream, null);
+            var parser = new EnvConfigParser(new JsonSerializer<ConDepEnvConfig>(new JsonConfigCrypto(_cryptoKey)));
+            _config = parser.GetTypedEnvConfig(memStream);
+            _tiersConfig = parser.GetTypedEnvConfig(tiersMemStream);
         }
 
         [Test]
@@ -443,7 +443,7 @@ namespace ConDep.Dsl.Tests
         {
             //var parser = new EnvConfigParser(new ConfigJsonSerializer(new JsonConfigCrypto()), new JsonConfigCrypto());
             var cryptoHandler = new JsonConfigCrypto(_cryptoKey);
-            var serializer = new ConfigJsonSerializer(cryptoHandler);
+            var serializer = new JsonSerializer<ConDepEnvConfig>(cryptoHandler);
 
             //parser.Encrypted(_json, out config);
             var config = serializer.DeSerialize(_json);
@@ -472,7 +472,7 @@ namespace ConDep.Dsl.Tests
 
             var decryptedJson = crypto.Decrypt(encryptedJson);
 
-            var serializer = new ConfigJsonSerializer(crypto);
+            var serializer = new JsonSerializer<ConDepEnvConfig>(crypto);
             serializer.DeSerialize(decryptedJson);
         }
     }
