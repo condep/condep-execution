@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Security;
@@ -13,6 +14,7 @@ using ConDep.Dsl.Remote;
 using ConDep.Dsl.Sequence;
 using ConDep.Dsl.Validation;
 using ConDep.Execution.Config;
+using ConDep.Execution.Logging;
 using ConDep.Execution.Validation;
 
 namespace ConDep.Execution
@@ -55,25 +57,29 @@ namespace ConDep.Execution
 
         public ConDepExecutionResult Execute(Guid executionId, string assemblyPath, ConDepOptions options, ITokenSource token)
         {
-            Directory.SetCurrentDirectory(Path.GetDirectoryName(assemblyPath));
-            Logger.Initialize(new RelayApiLogger(executionId));
-
-            var configAssemblyLoader = new ConDepAssemblyHandler(assemblyPath);
-            options.Assembly = configAssemblyLoader.GetAssembly();
-
-            var conDepSettings = new ConDepSettings
-            {
-                Options = options
-            };
-            conDepSettings.Config = ConfigHandler.GetEnvConfig(conDepSettings);
-
             try
             {
+                // 1. Initialize Logger
+                // 2. Load ConDep Assembly and assign to Options
+                // 3. Load Env Config and add to Settings
+                // 4. 
+                Directory.SetCurrentDirectory(Path.GetDirectoryName(assemblyPath));
+                Logger.Initialize(new RelayApiLogger(executionId));
+
+                var configAssemblyLoader = new ConDepAssemblyHandler(assemblyPath);
+                options.Assembly = configAssemblyLoader.GetAssembly();
+
+                var conDepSettings = new ConDepSettings
+                {
+                    Options = options
+                };
+                conDepSettings.Config = ConfigHandler.GetEnvConfig(conDepSettings);
+
                 if (conDepSettings.Options.Assembly == null) throw new ArgumentException("assembly");
 
                 var lbLookup = new LoadBalancerLookup(conDepSettings.Config.LoadBalancer);
-                var artifactConfigHandler = new RunbookConfigurationHandler(new RunbookHandler(), new RunbookDependencyHandler(), new ServerHandler(), lbLookup.GetLoadBalancer());
-                var sequenceManager = artifactConfigHandler.CreateExecutionSequence(conDepSettings);
+                var runbookConfigHandler = new RunbookConfigurationHandler(new RunbookHandler(), new RunbookDependencyHandler(), new ServerHandler(), lbLookup.GetLoadBalancer());
+                var sequenceManager = runbookConfigHandler.CreateExecutionSequence(conDepSettings);
 
                 var clientValidator = new ClientValidator();
 

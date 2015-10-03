@@ -87,6 +87,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppDependencyTests.cs" />
+    <Compile Include="ArtifactJsonTests.cs" />
     <Compile Include="JsonParsingTests.cs" />
     <Compile Include="LoggerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

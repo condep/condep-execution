@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using ConDep.Dsl.Config;
+using ConDep.Execution.Config;
+using Newtonsoft.Json;
 
 namespace ConDep.Execution.Relay
 {
@@ -20,19 +22,41 @@ namespace ConDep.Execution.Relay
     }
 
     [DataContract]
+    [KnownType(typeof(HttpArtifact))]
+    [KnownType(typeof(HttpBasicArtifact))]
+    [KnownType(typeof(RestBearerArtifact))]
+    [JsonConverter(typeof(ApplicationArtifactConverter))]
     public class ApplicationArtifact
     {
         [DataMember]
         public string Name { get; set; }
         
         [DataMember]
-        public ClearTextCredentials Credentials { get; set; }
-        
-        [DataMember]
         public string RelativeTargetPath { get; set; }
         
+    }
+
+    [DataContract]
+    [KnownType(typeof(HttpBasicArtifact))]
+    [KnownType(typeof(RestBearerArtifact))]
+    public class HttpArtifact : ApplicationArtifact
+    {
         [DataMember]
         public Uri Url { get; set; }
+    }
+
+    [DataContract]
+    public class HttpBasicArtifact : HttpArtifact
+    {
+        [DataMember]
+        public ClearTextCredentials Credentials { get; set; }
+    }
+
+    [DataContract]
+    public class RestBearerArtifact : HttpArtifact
+    {
+        [DataMember]
+        public string Token { get; set; }
     }
 
     [DataContract]
