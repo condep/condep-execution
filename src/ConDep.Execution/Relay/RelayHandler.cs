@@ -6,6 +6,7 @@ using System.Net.Http.Headers;
 using ConDep.Dsl.Logging;
 using ConDep.Execution.Config;
 using Microsoft.ServiceBus;
+using System.Threading;
 
 namespace ConDep.Execution.Relay
 {
@@ -42,8 +43,10 @@ namespace ConDep.Execution.Relay
                 result = _client.GetAsync(string.Format("RelayService/Runbook/Log/{0}", startedStatus.ExecutionId)).Result;
                 var log = result.Content.ReadAsAsync<ExecutionLog>().Result;
 
-                //Console.WriteLine("Started : " + startedStatus.Started);
-                Logger.Info(log.Content);
+                if (!string.IsNullOrWhiteSpace(log.Content))
+                {
+                    Logger.Info(log.Content);
+                }
 
                 while (!log.Finished)
                 {
@@ -52,7 +55,11 @@ namespace ConDep.Execution.Relay
                             log.End)).Result;
                     log = result.Content.ReadAsAsync<ExecutionLog>().Result;
 
-                    Logger.Info(log.Content);
+                    if(!string.IsNullOrWhiteSpace(log.Content))
+                    {
+                        Logger.Info(log.Content);
+                    }
+                    Thread.Sleep(2000);
                 }
             }
             catch (Exception ex)
