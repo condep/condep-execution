@@ -56,9 +56,9 @@ namespace ConDep.Execution
             foreach (var inlineMessage in lines)
             {
                 if (formatArgs != null && formatArgs.Length > 0) 
-                    _writer.WriteLine(inlineMessage, formatArgs);
+                    _writer.WriteLine("[" + traceLevel + "]" + inlineMessage, formatArgs);
                 else
-                    _writer.WriteLine(inlineMessage);
+                    _writer.WriteLine("[" + traceLevel + "]" + inlineMessage);
             }
 
             if (ex != null)
