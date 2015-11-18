@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
 using ConDep.Dsl.Config;
@@ -82,7 +83,7 @@ namespace ConDep.Execution.Relay
         public bool ContinueAfterMarkedServer { get; set; }
         
         [DataMember]
-        public string TraceLevel { get; set; }
+        public TraceLevel TraceLevel { get; set; }
         
         [DataMember]
         public string WebQAddress { get; set; }
@@ -128,6 +129,11 @@ namespace ConDep.Execution.Relay
     [DataContract]
     public class ExecutionStatus
     {
+        public ExecutionStatus()
+        {
+            UnhandledExceptions = new List<TimedException>();
+        }
+
         [DataMember]
         public Guid ExecutionId { get; set; }
 
@@ -145,6 +151,23 @@ namespace ConDep.Execution.Relay
 
         [DataMember]
         public DateTime Ended { get; set; }
+
+        [DataMember]
+        public List<TimedException> UnhandledExceptions { get; set; }
+
+        public void AddUnhandledException(Exception ex)
+        {
+            UnhandledExceptions.Add(new TimedException
+            {
+                DateTime = DateTime.UtcNow,
+                Exception = ex
+            });
+        }
+
+        public void AddUnhandledException(TimedException ex)
+        {
+            UnhandledExceptions.Add(ex);
+        }
     }
 
     [DataContract]

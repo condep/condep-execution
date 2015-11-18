@@ -65,6 +65,9 @@ namespace ConDep.Execution
                 // 4. 
                 Directory.SetCurrentDirectory(Path.GetDirectoryName(assemblyPath));
                 Logger.Initialize(new RelayApiLogger(executionId));
+                Logger.TraceLevel = options.TraceLevel > 0 ? options.TraceLevel : TraceLevel.Info;
+
+                Logger.Info("Trace level set to " + Logger.TraceLevel);
 
                 var configAssemblyLoader = new ConDepAssemblyHandler(assemblyPath);
                 options.Assembly = configAssemblyLoader.GetAssembly();
@@ -99,8 +102,15 @@ namespace ConDep.Execution
             }
             catch (Exception ex)
             {
-                Logger.Error("An error sneaked by.", ex);
-                return new ConDepExecutionResult(false);
+                try
+                {
+                    Logger.Error("An error sneaked by.", ex);
+                }
+                catch { }
+
+                var result = new ConDepExecutionResult(false);
+                result.AddException(ex);
+                return result;
                 //throw;
             }
         }

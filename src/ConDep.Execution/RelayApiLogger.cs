@@ -21,7 +21,7 @@ namespace ConDep.Execution
             var path = Path.Combine(Path.GetTempPath(), "ConDepRelay");
             Directory.CreateDirectory(path);
 
-            _internalLog = new FileStream(Path.Combine(path, executionId + ".log"), FileMode.Create, FileAccess.Write, FileShare.ReadWrite);
+            _internalLog = new FileStream(Path.Combine(path, executionId + ".log"), FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
             _writer = new StreamWriter(_internalLog);
         }
 
@@ -50,15 +50,17 @@ namespace ConDep.Execution
 
         public override void Log(string message, Exception ex, TraceLevel traceLevel, params object[] formatArgs)
         {
+            if (traceLevel > TraceLevel) return;
+
             var formattedMessage = (formatArgs != null && formatArgs.Length > 0) ? string.Format(message, formatArgs) : message;
             var lines = ReformatWithPrefix(formattedMessage);
 
             foreach (var inlineMessage in lines)
             {
                 if (formatArgs != null && formatArgs.Length > 0) 
-                    _writer.WriteLine("[" + traceLevel + "]" + inlineMessage, formatArgs);
+                    _writer.WriteLine(inlineMessage, formatArgs);
                 else
-                    _writer.WriteLine("[" + traceLevel + "]" + inlineMessage);
+                    _writer.WriteLine(inlineMessage);
             }
 
             if (ex != null)
