@@ -66,14 +66,14 @@ namespace ConDep.Execution
             if (ex != null)
             {
                 _writer.WriteLine(GetSectionPrefix() + "Exception:");
+                _writer.WriteLine(ReformatWithPrefix(ex.Message));
                 _writer.WriteLine(ReformatWithPrefix(ex.StackTrace));
 
                 if (ex.InnerException != null)
                 {
-                    _writer.WriteLine(GetSectionPrefix() + "Inner Exception:");
                     _writer.Flush();
 
-                    Error(ex.InnerException.Message, ex.InnerException);
+                    Error("Inner exception:", ex.InnerException);
                 }
             }
             _writer.Flush();
