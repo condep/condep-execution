@@ -7,33 +7,33 @@ namespace ConDep.Execution
 {
     internal class RunbookDependencyHandler : IResolveRunbookDependencies
     {
-        public bool HasDependenciesDefined(IProvideRunbook artifact)
+        public bool HasDependenciesDefined(Runbook artifact)
         {
             var typeName = typeof(IDependOn<>).Name;
             var interfaces = artifact.GetType().GetInterfaces();
             return interfaces.Any(x => x.Name == typeName);
         }
 
-        public void PopulateWithDependencies(IProvideRunbook runbook, ConDepSettings settings)
-        {
-            if (!HasDependenciesDefined(runbook)) return;
+        //public void PopulateWithDependencies(Runbook runbook, ConDepSettings settings)
+        //{
+        //    if (!HasDependenciesDefined(runbook)) return;
 
-            runbook.Dependencies = GetDependeciesForRunbook(runbook, settings);
-        }
+        //    runbook.Dependencies = GetDependeciesForRunbook(runbook, settings);
+        //}
 
-        private IEnumerable<IProvideRunbook> GetDependeciesForRunbook(IProvideRunbook runbook, ConDepSettings settings)
+        public List<Runbook> GetDependeciesForRunbook(Runbook runbook, ConDepSettings settings)
         {
             var typeName = typeof(IDependOn<>).Name;
             var typeInterfaces = runbook.GetType().GetInterfaces();
 
             var dependencies = typeInterfaces.Where(x => x.Name == typeName);
-            var dependencyInstances = new List<IProvideRunbook>();
+            var dependencyInstances = new List<Runbook>();
 
             foreach (var infraInterface in dependencies)
             {
                 var dependencyType = infraInterface.GetGenericArguments().Single();
 
-                var dependencyInstance = settings.Options.Assembly.CreateInstance(dependencyType.FullName) as IProvideRunbook;
+                var dependencyInstance = settings.Options.Assembly.CreateInstance(dependencyType.FullName) as Runbook;
 
                 dependencyInstances.AddRange(new RunbookDependencyHandler().GetDependeciesForRunbook(dependencyInstance, settings));
                 dependencyInstances.Add(dependencyInstance);

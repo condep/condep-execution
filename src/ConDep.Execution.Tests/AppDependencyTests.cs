@@ -29,8 +29,8 @@ namespace ConDep.Dsl.Tests
             var settings = new ConDepSettings {Options = {Assembly = GetType().Assembly}};
 
             var artifact = new MyArtifactDependentOnStandardArtifact();
-            dependencyHandler.PopulateWithDependencies(artifact, settings);
-            Assert.That(artifact.Dependencies.Single(), Is.InstanceOf<MyStandardArtifact1>());
+            var runbooks = dependencyHandler.GetDependeciesForRunbook(artifact, settings);
+            Assert.That(runbooks.First(), Is.InstanceOf<MyStandardArtifact1>());
         }
 
         [Test]
@@ -40,12 +40,11 @@ namespace ConDep.Dsl.Tests
             var settings = new ConDepSettings { Options = { Assembly = GetType().Assembly } };
 
             var artifact = new MyArtifactWithMultipleDependencies();
-            dependencyHandler.PopulateWithDependencies(artifact, settings);
-            var dependencies = artifact.Dependencies.ToList();
+            var runbooks = dependencyHandler.GetDependeciesForRunbook(artifact, settings);
 
-            Assert.That(dependencies.Count, Is.EqualTo(2));
-            Assert.That(dependencies[0], Is.InstanceOf<MyStandardArtifact1>());
-            Assert.That(dependencies[1], Is.InstanceOf<MyStandardArtifact2>());
+            Assert.That(runbooks.Count, Is.EqualTo(2));
+            Assert.That(runbooks[0], Is.InstanceOf<MyStandardArtifact1>());
+            Assert.That(runbooks[1], Is.InstanceOf<MyStandardArtifact2>());
         }
 
         [Test]
@@ -55,51 +54,47 @@ namespace ConDep.Dsl.Tests
             var settings = new ConDepSettings { Options = { Assembly = GetType().Assembly } };
 
             var artifact = new MyArtifactWithHierarchicalDependencies();
-            dependencyHandler.PopulateWithDependencies(artifact, settings);
-            var dependencies = artifact.Dependencies.ToList();
+            var runbooks = dependencyHandler.GetDependeciesForRunbook(artifact, settings);
 
-            Assert.That(dependencies.Count, Is.EqualTo(2));
-            Assert.That(dependencies[0], Is.InstanceOf<MyStandardArtifact1>());
-            Assert.That(dependencies[1], Is.InstanceOf<MyArtifactDependentOnStandardArtifact>());
+            Assert.That(runbooks.Count, Is.EqualTo(2));
+            Assert.That(runbooks[0], Is.InstanceOf<MyStandardArtifact1>());
+            Assert.That(runbooks[1], Is.InstanceOf<MyArtifactDependentOnStandardArtifact>());
+        }
+    }
+
+    public class MyStandardArtifact1 : Runbook
+    {
+        public override void Execute(IOfferOperations dsl, ConDepSettings settings)
+        {
             
         }
     }
 
-    public class MyStandardArtifact1 : Runbook.Local
+    public class MyStandardArtifact2 : Runbook
     {
-        public override void Configure(IOfferLocalOperations onLocalMachine, ConDepSettings settings)
+        public override void Execute(IOfferOperations dsl, ConDepSettings settings)
         {
-
         }
     }
 
-    public class MyStandardArtifact2 : Runbook.Local
+    public class MyArtifactDependentOnStandardArtifact : Runbook, IDependOn<MyStandardArtifact1>
     {
-        public override void Configure(IOfferLocalOperations onLocalMachine, ConDepSettings settings)
+        public override void Execute(IOfferOperations dsl, ConDepSettings settings)
         {
-
+            
         }
     }
 
-    public class MyArtifactDependentOnStandardArtifact : Runbook.Local, IDependOn<MyStandardArtifact1>
+    public class MyArtifactWithMultipleDependencies : Runbook, IDependOn<MyStandardArtifact1>, IDependOn<MyStandardArtifact2>
     {
-        public override void Configure(IOfferLocalOperations onLocalMachine, ConDepSettings settings)
+        public override void Execute(IOfferOperations dsl, ConDepSettings settings)
         {
-
         }
     }
 
-    public class MyArtifactWithMultipleDependencies : Runbook.Local, IDependOn<MyStandardArtifact1>, IDependOn<MyStandardArtifact2>
+    public class MyArtifactWithHierarchicalDependencies : Runbook, IDependOn<MyArtifactDependentOnStandardArtifact>
     {
-        public override void Configure(IOfferLocalOperations onLocalMachine, ConDepSettings settings)
-        {
-
-        }
-    }
-
-    public class MyArtifactWithHierarchicalDependencies : Runbook.Local, IDependOn<MyArtifactDependentOnStandardArtifact>
-    {
-        public override void Configure(IOfferLocalOperations onLocalMachine, ConDepSettings settings)
+        public override void Execute(IOfferOperations dsl, ConDepSettings settings)
         {
             
         }

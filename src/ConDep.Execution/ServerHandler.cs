@@ -8,7 +8,7 @@ namespace ConDep.Execution
 {
     internal class ServerHandler : IDiscoverServers
     {
-        public IEnumerable<ServerConfig> GetServers(IProvideRunbook runbook, ConDepSettings settings)
+        public IEnumerable<ServerConfig> GetServers(Runbook runbook, ConDepSettings settings)
         {
             if (settings.Config.UsingTiers)
             {
@@ -26,13 +26,13 @@ namespace ConDep.Execution
             return settings.Config.Servers;
         }
 
-        private static void ValidateApplicationTier(IProvideRunbook application, ConDepSettings settings)
+        private static void ValidateApplicationTier(Runbook runbook, ConDepSettings settings)
         {
-            var hasTier = application.GetType().GetCustomAttributes(typeof(TierAttribute), false).Any();
-            if (!hasTier) throw new ConDepNoRunbookTierDefinedException(application, settings);
+            var hasTier = runbook.GetType().GetCustomAttributes(typeof(TierAttribute), false).Any();
+            if (!hasTier) throw new ConDepNoRunbookTierDefinedException(runbook, settings);
 
-            var hasSingleTier = application.GetType().GetCustomAttributes(typeof(TierAttribute), false).SingleOrDefault() != null;
-            if (!hasSingleTier) throw new ConDepNoRunbookTierDefinedException(String.Format("Multiple tiers defined for {0}. Only one tier is allowed by Artifact.", application.GetType().Name));
+            var hasSingleTier = runbook.GetType().GetCustomAttributes(typeof(TierAttribute), false).SingleOrDefault() != null;
+            if (!hasSingleTier) throw new ConDepNoRunbookTierDefinedException(String.Format("Multiple tiers defined for {0}. Only one tier is allowed by Artifact.", runbook.GetType().Name));
         }
     }
 }

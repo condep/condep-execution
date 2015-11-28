@@ -47,11 +47,11 @@ namespace ConDep.Execution
             {
                 _psExecutor.Execute(server, @"
 try {
-    if(ConDep-ChocoExist) {
-        ConDep-ChocoUpgrade
+    if(Assert-ConDepChocoExist) {
+        Invoke-ConDepChocoUpgrade
     }
     else {
-        ConDep-ChocoInstall
+        Invoke-ConDepChocoInstall
     }
 }
 catch {

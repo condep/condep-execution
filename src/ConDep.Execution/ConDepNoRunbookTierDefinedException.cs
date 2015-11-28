@@ -11,7 +11,7 @@ namespace ConDep.Execution
         {
         }
 
-        public ConDepNoRunbookTierDefinedException(IProvideRunbook application, ConDepSettings settings)
+        public ConDepNoRunbookTierDefinedException(Runbook application, ConDepSettings settings)
             : base(string.Format("No Tiers defined for application {0}. You need to specify a tier using the {1} attribute on the {0} class. Tiers available in your configuration are {2}.",
                 application.GetType().Name, 
                 typeof(TierAttribute).Name, 

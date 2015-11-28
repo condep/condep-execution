@@ -1,11 +1,11 @@
 ﻿Set-StrictMode -Version 3
 
-function ConDep-ChocoExist() {
-    if (ConDep-ChocoPath) { return $true }
+function Assert-ConDepChocoExist() {
+    if (Get-ConDepChocoPath) { return $true }
     return $false
 }
 
-function ConDep-ChocoPath {
+function Get-ConDepChocoPath {
     if($env:ChocolateyInstall) {
         return $env:ChocolateyInstall
     }
@@ -21,15 +21,15 @@ function ConDep-ChocoPath {
     return $null
 }
 
-function ConDep-ChocoExe {
-	if(ConDep-ChocoPath) {
-		return "$(ConDep-ChocoPath)\bin\choco.exe"
+function Get-ConDepChocoExe {
+	if(Get-ConDepChocoPath) {
+		return "$(Get-ConDepChocoPath)\bin\choco.exe"
 	}
 	return "choco.exe"
 }
 
-function ConDep-ChocoNew {
-	$answer = &(ConDep-ChocoExe) -v
+function Assert-ConDepChocoNew {
+	$answer = &(Get-ConDepChocoExe) -v
 
 	foreach($line in $answer -split "`n") {
 		if(!$line) { next }
@@ -38,10 +38,10 @@ function ConDep-ChocoNew {
 	}
 }
 
-function ConDep-ChocoUpgrade {
-	if(ConDep-ChocoNew) {
+function Invoke-ConDepChocoUpgrade {
+	if(Assert-ConDepChocoNew) {
 		write-Host "Upgrading Chocolatey..."
-		&(ConDep-ChocoExe) upgrade chocolatey -dvy
+		&(Get-ConDepChocoExe) upgrade chocolatey -dvy
 	}
 	else {
 		write-Host "No recent version of Chocolatey found. Installing now..."
@@ -49,19 +49,7 @@ function ConDep-ChocoUpgrade {
 	}
 }
 
-function ConDep-ChocoInstallPackage {
-
-}
-
-function ConDep-ChocoUpgradePackage {
-
-}
-
-function ConDep-ChocoPackageExist {
-
-}
-
-function ConDep-ChocoInstall {
+function Invoke-ConDepChocoInstall {
 	iex ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))
 }
 

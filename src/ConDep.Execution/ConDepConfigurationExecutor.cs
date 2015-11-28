@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
@@ -57,62 +59,63 @@ namespace ConDep.Execution
 
         public ConDepExecutionResult Execute(Guid executionId, string assemblyPath, ConDepOptions options, ITokenSource token)
         {
-            try
-            {
-                // 1. Initialize Logger
-                // 2. Load ConDep Assembly and assign to Options
-                // 3. Load Env Config and add to Settings
-                // 4. 
-                Directory.SetCurrentDirectory(Path.GetDirectoryName(assemblyPath));
-                Logger.Initialize(new RelayApiLogger(executionId));
-                Logger.TraceLevel = options.TraceLevel > 0 ? options.TraceLevel : TraceLevel.Info;
+            throw new NotImplementedException();
+            //try
+            //{
+            //    // 1. Initialize Logger
+            //    // 2. Load ConDep Assembly and assign to Options
+            //    // 3. Load Env Config and add to Settings
+            //    // 4. 
+            //    Directory.SetCurrentDirectory(Path.GetDirectoryName(assemblyPath));
+            //    Logger.Initialize(new RelayApiLogger(executionId));
+            //    Logger.TraceLevel = options.TraceLevel > 0 ? options.TraceLevel : TraceLevel.Info;
 
-                Logger.Info("Trace level set to " + Logger.TraceLevel);
+            //    Logger.Info("Trace level set to " + Logger.TraceLevel);
 
-                var configAssemblyLoader = new ConDepAssemblyHandler(assemblyPath);
-                options.Assembly = configAssemblyLoader.GetAssembly();
+            //    var configAssemblyLoader = new ConDepAssemblyHandler(assemblyPath);
+            //    options.Assembly = configAssemblyLoader.GetAssembly();
 
-                var conDepSettings = new ConDepSettings
-                {
-                    Options = options
-                };
-                conDepSettings.Config = ConfigHandler.GetEnvConfig(conDepSettings);
+            //    var conDepSettings = new ConDepSettings
+            //    {
+            //        Options = options
+            //    };
+            //    conDepSettings.Config = ConfigHandler.GetEnvConfig(conDepSettings);
 
-                if (conDepSettings.Options.Assembly == null) throw new ArgumentException("assembly");
+            //    if (conDepSettings.Options.Assembly == null) throw new ArgumentException("assembly");
 
-                var lbLookup = new LoadBalancerLookup(conDepSettings.Config.LoadBalancer);
-                var runbookConfigHandler = new RunbookConfigurationHandler(new RunbookHandler(), new RunbookDependencyHandler(), new ServerHandler(), lbLookup.GetLoadBalancer());
-                var sequenceManager = runbookConfigHandler.CreateExecutionSequence(conDepSettings);
+            //    var lbLookup = new LoadBalancerLookup(conDepSettings.Config.LoadBalancer);
+            //    var runbookConfigHandler = new RunbookConfigurationHandler(new RunbookHandler(), new RunbookDependencyHandler(), lbLookup.GetLoadBalancer());
+            //    var sequenceManager = runbookConfigHandler.CreateExecutionSequence(conDepSettings);
 
-                var clientValidator = new ClientValidator();
+            //    var clientValidator = new ClientValidator();
 
-                var serverInfoHarvester = HarvesterFactory.GetHarvester(conDepSettings);
-                var serverValidator = new RemoteServerValidator(conDepSettings.Config.Servers,
-                                                                serverInfoHarvester, new PowerShellExecutor());
+            //    var serverInfoHarvester = HarvesterFactory.GetHarvester(conDepSettings);
+            //    var serverValidator = new RemoteServerValidator(conDepSettings.Config.Servers,
+            //                                                    serverInfoHarvester, new PowerShellExecutor());
 
 
-                if (conDepSettings.Options.DryRun)
-                {
-                    Logger.Warn("Showing execution sequence from dry run:");
-                    sequenceManager.DryRun(conDepSettings);
-                    return new ConDepExecutionResult(true);
-                }
+            //    if (conDepSettings.Options.DryRun)
+            //    {
+            //        Logger.Warn("Showing execution sequence from dry run:");
+            //        sequenceManager.DryRun(conDepSettings);
+            //        return new ConDepExecutionResult(true);
+            //    }
 
-                return Execute(conDepSettings, clientValidator, serverValidator, sequenceManager, token.Token);
-            }
-            catch (Exception ex)
-            {
-                try
-                {
-                    Logger.Error("An error sneaked by.", ex);
-                }
-                catch { }
+            //    return Execute(conDepSettings, clientValidator, serverValidator, sequenceManager, token.Token);
+            //}
+            //catch (Exception ex)
+            //{
+            //    try
+            //    {
+            //        Logger.Error("An error sneaked by.", ex);
+            //    }
+            //    catch { }
 
-                var result = new ConDepExecutionResult(false);
-                result.AddException(ex);
-                return result;
-                //throw;
-            }
+            //    var result = new ConDepExecutionResult(false);
+            //    result.AddException(ex);
+            //    return result;
+            //    //throw;
+            //}
         }
 
         public static ConDepExecutionResult ExecuteFromAssembly(ConDepSettings conDepSettings, CancellationToken token)
@@ -122,8 +125,8 @@ namespace ConDep.Execution
                 if (conDepSettings.Options.Assembly == null) throw new ArgumentException("assembly");
 
                 var lbLookup = new LoadBalancerLookup(conDepSettings.Config.LoadBalancer);
-                var artifactConfigHandler = new RunbookConfigurationHandler(new RunbookHandler(), new RunbookDependencyHandler(), new ServerHandler(), lbLookup.GetLoadBalancer());
-                var sequenceManager = artifactConfigHandler.CreateExecutionSequence(conDepSettings);
+                var runbookConfigurationHandler = new RunbookConfigurationHandler(new RunbookHandler(), new RunbookDependencyHandler(), lbLookup.GetLoadBalancer());
+                //var sequenceManager = artifactConfigHandler.CreateExecutionSequence(conDepSettings);
 
                 var clientValidator = new ClientValidator();
 
@@ -132,15 +135,14 @@ namespace ConDep.Execution
                                                                 serverInfoHarvester, new PowerShellExecutor());
 
 
-                if (conDepSettings.Options.DryRun)
-                {
-                    Logger.Warn("Showing execution sequence from dry run:");
-                    sequenceManager.DryRun(conDepSettings);
-                    return new ConDepExecutionResult(true);
-                }
+                //if (conDepSettings.Options.DryRun)
+                //{
+                //    Logger.Warn("Showing execution sequence from dry run:");
+                //    sequenceManager.DryRun(conDepSettings);
+                //    return new ConDepExecutionResult(true);
+                //}
 
-                return new ConDepConfigurationExecutor().Execute(conDepSettings, clientValidator,
-                                                                        serverValidator, sequenceManager, token);
+                return new ConDepConfigurationExecutor().Execute(conDepSettings, clientValidator, serverValidator, runbookConfigurationHandler.GetRunbooksToExecute(conDepSettings), new ServerHandler(), token);
             }
             catch (Exception ex)
             {
@@ -154,14 +156,14 @@ namespace ConDep.Execution
             return Task.Factory.StartNew(() => ExecuteFromAssembly(conDepSettings, token), token);
         }
 
-        internal ConDepExecutionResult Execute(ConDepSettings settings, IValidateClient clientValidator, IValidateServer serverValidator, IManageExecutionSequence execManager, CancellationToken token)
+        internal ConDepExecutionResult Execute(ConDepSettings settings, IValidateClient clientValidator, IValidateServer serverValidator, IEnumerable<Runbook> runbooks, IDiscoverServers serverHandler, CancellationToken token)
         {
             if (settings == null) { throw new ArgumentException("settings"); }
             if (settings.Config == null) { throw new ArgumentException("settings.Config"); }
             if (settings.Options == null) { throw new ArgumentException("settings.Options"); }
             if (clientValidator == null) { throw new ArgumentException("clientValidator"); }
             if (serverValidator == null) { throw new ArgumentException("serverValidator"); }
-            if (execManager == null) { throw new ArgumentException("execManager"); }
+            if (runbooks == null) { throw new ArgumentException("runbook"); }
 
             ServicePointManager.ServerCertificateValidationCallback = ValidateConDepNodeServerCert;
 
@@ -177,13 +179,13 @@ namespace ConDep.Execution
                 //Todo: Result of merge. Not sure if this is correct.
                 token.Register(() => Cancel(settings, status, token));
 
-                var notification = new Notification();
-                if (!execManager.IsValid(notification))
+                foreach (var runbook in runbooks)
                 {
-                    notification.Throw();
+                    var servers = serverHandler.GetServers(runbook, settings);
+                    settings.Config.Servers = servers.ToList();
+                    runbook.Execute(new OperationsBuilder(1, settings, token), settings);
                 }
 
-                execManager.Execute(status, settings, token);
                 return new ConDepExecutionResult(true);
             }
             catch (OperationCanceledException)

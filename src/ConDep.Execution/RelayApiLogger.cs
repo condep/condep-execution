@@ -53,7 +53,7 @@ namespace ConDep.Execution
             if (traceLevel > TraceLevel) return;
 
             var formattedMessage = (formatArgs != null && formatArgs.Length > 0) ? string.Format(message, formatArgs) : message;
-            var lines = ReformatWithPrefix(formattedMessage);
+            var lines = ReformatWithPrefix(formattedMessage, traceLevel);
 
             foreach (var inlineMessage in lines)
             {
@@ -65,9 +65,18 @@ namespace ConDep.Execution
 
             if (ex != null)
             {
-                _writer.WriteLine(GetSectionPrefix() + "Exception:");
-                _writer.WriteLine(ReformatWithPrefix(ex.Message));
-                _writer.WriteLine(ReformatWithPrefix(ex.StackTrace));
+                _writer.WriteLine(GetSectionPrefix(traceLevel) + "Exception:");
+                lines = ReformatWithPrefix(ex.Message, traceLevel);
+                foreach (var inlineMessage in lines)
+                {
+                    _writer.WriteLine(inlineMessage);
+                }
+
+                lines = ReformatWithPrefix(ex.StackTrace, traceLevel);
+                foreach (var inlineMessage in lines)
+                {
+                    _writer.WriteLine(inlineMessage);
+                }
 
                 if (ex.InnerException != null)
                 {
@@ -79,15 +88,19 @@ namespace ConDep.Execution
             _writer.Flush();
         }
 
-        private IEnumerable<string> ReformatWithPrefix(string stackTrace)
+        private IEnumerable<string> ReformatWithPrefix(string stackTrace, TraceLevel traceLevel)
         {
-            var prefix = GetSectionPrefix();
+            var prefix = GetSectionPrefix(traceLevel);
             return stackTrace.Split(new[] {"\r\n", "\n"}, StringSplitOptions.None).Select(line => prefix + line);
         }
 
-        private string GetSectionPrefix()
+        private string GetSectionPrefix(TraceLevel traceLevel)
         {
-            var prefix = "";
+            const int fixedLengthTraceLevel = 7;
+            int postFixLength = fixedLengthTraceLevel - traceLevel.ToString().Length;
+            var strTrcLvl = traceLevel.ToString().PadRight(postFixLength);
+
+            var prefix = string.Format("[{0}] ", strTrcLvl);
             for (var i = 0; i < _indentLevel; i++)
             {
                 prefix += LEVEL_INDICATOR;

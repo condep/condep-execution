@@ -5,6 +5,6 @@ namespace ConDep.Execution
 {
     public interface IDiscoverRunbooks
     {
-        IProvideRunbook GetRunbook(ConDepSettings settings);
+        Runbook GetRunbook(ConDepSettings settings);
     }
 }
