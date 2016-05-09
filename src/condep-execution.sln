@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConDep.Execution", "ConDep.Execution\ConDep.Execution.csproj", "{CD01357A-C6A1-426D-9BA9-B01EAA32CC62}"
 EndProject
@@ -11,6 +11,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{4BC76D5E
 	ProjectSection(SolutionItems) = preProject
 		..\build\buildRelease.ps1 = ..\build\buildRelease.ps1
 		..\build\default.ps1 = ..\build\default.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{D93BC54E-278C-4029-9D6E-17D7D36F8D55}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\nuget.config = .nuget\nuget.config
 	EndProjectSection
 EndProject
 Global
