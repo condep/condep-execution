@@ -3,17 +3,16 @@ using ConDep.Dsl;
 using ConDep.Dsl.Config;
 using ConDep.Dsl.Logging;
 using ConDep.Dsl.Remote;
-using ConDep.Dsl.Validation;
 
 namespace ConDep.Execution
 {
-    internal class PostRemoteOps : IExecuteRemotely
+    internal class PostRemoteOps : RemoteOperation
     {
-        public void Execute(ServerConfig server, IReportStatus status, ConDepSettings settings, CancellationToken token)
+        public override Result Execute(IOfferRemoteOperations remote, ServerConfig server, ConDepSettings settings, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
 
-            Logger.WithLogSection(string.Format("Stopping ConDepNode on server {0}", server.Name), () =>
+            Logger.WithLogSection($"Stopping ConDepNode on server {server.Name}", () =>
             {
                 var executor = new PowerShellExecutor();
                 executor.Execute(server, "Stop-ConDepNode", mod =>
@@ -22,17 +21,17 @@ namespace ConDep.Execution
                     mod.LoadConDepNodeModule = true;
                 }, logOutput: false);
             });
+
+            return Result.SuccessUnChanged();
         }
 
-        public string Name { get { return "Post Remote Operation"; } }
-        public bool IsValid(Notification notification)
-        {
-            return true;
-        }
+        public override string Name { get { return "Post Remote Operation"; } }
 
         public void DryRun()
         {
             Logger.WithLogSection(Name, () => {});
         }
+
+        public Result Result { get; set; }
     }
 }

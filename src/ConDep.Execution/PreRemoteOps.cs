@@ -5,11 +5,11 @@ using ConDep.Dsl;
 using ConDep.Dsl.Config;
 using ConDep.Dsl.Logging;
 using ConDep.Dsl.Remote;
-using ConDep.Dsl.Validation;
+using ConDep.Dsl.Remote.Node;
 
 namespace ConDep.Execution
 {
-    internal class PreRemoteOps : IExecuteRemotely
+    internal class PreRemoteOps : RemoteOperation
     {
         private readonly PowerShellExecutor _psExecutor;
         const string TMP_FOLDER = @"{0}\temp\ConDep";
@@ -19,27 +19,30 @@ namespace ConDep.Execution
             _psExecutor = psExecutor;
         }
 
-        public void Execute(ServerConfig server, IReportStatus status, ConDepSettings settings, CancellationToken token)
+        public override Result Execute(IOfferRemoteOperations remote, ServerConfig server, ConDepSettings settings, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
 
             Logger.WithLogSection("Pre-Operations", () =>
-                {
-                    server.GetServerInfo().TempFolderDos = string.Format(TMP_FOLDER, "%windir%");
-                    Logger.Info(string.Format("Dos temp folder is {0}", server.GetServerInfo().TempFolderDos));
+            {
+                server.GetServerInfo().TempFolderDos = string.Format(TMP_FOLDER, "%windir%");
+                Logger.Info(string.Format("Dos temp folder is {0}", server.GetServerInfo().TempFolderDos));
 
-                    server.GetServerInfo().TempFolderPowerShell = string.Format(TMP_FOLDER, "$env:windir");
-                    Logger.Info(string.Format("PowerShell temp folder is {0}", server.GetServerInfo().TempFolderPowerShell));
+                server.GetServerInfo().TempFolderPowerShell = string.Format(TMP_FOLDER, "$env:windir");
+                Logger.Info(string.Format("PowerShell temp folder is {0}", server.GetServerInfo().TempFolderPowerShell));
 
-                    PublishConDepNode(server, settings);
-                    
-                    var scriptPublisher = new PowerShellScriptPublisher(settings);
-                    Logger.WithLogSection("Copying external scripts", () => scriptPublisher.PublishScripts(server));
-                    Logger.WithLogSection("Copying remote helper assembly", () => scriptPublisher.PublishRemoteHelperAssembly(server));
+                PublishConDepNode(server, settings);
 
-                    InstallChocolatey(server, settings);
-                });
+                var scriptPublisher = new PowerShellScriptPublisher(settings);
+                Logger.WithLogSection("Copying external scripts", () => scriptPublisher.PublishScripts(server));
+                Logger.WithLogSection("Copying remote helper assembly", () => scriptPublisher.PublishRemoteHelperAssembly(server));
+
+                InstallChocolatey(server, settings);
+            });
+            return Result.SuccessUnChanged();
         }
+
+        public override string Name { get { return "Pre-Operation"; } }
 
         private void InstallChocolatey(ServerConfig server, ConDepSettings settings)
         {
@@ -61,11 +64,6 @@ catch {
 ");
 
             });
-        }
-
-        public bool IsValid(Notification notification)
-        {
-            return true;
         }
 
         private void PublishConDepNode(ServerConfig server, ConDepSettings settings)
@@ -90,7 +88,7 @@ catch {
                         path = executionPath;
                     }
 
-                    var nodeUrl = new ConDepNodeUrl(server, settings);
+                    var nodeUrl = new ConDepNodeUrl(server);
 
                     var nodePublisher = new ConDepNodePublisher(path, Path.Combine(server.GetServerInfo().OperatingSystem.ProgramFilesFolder, "ConDepNode", Path.GetFileName(path)), nodeUrl, new PowerShellExecutor());
                     nodePublisher.Execute(server);
@@ -104,11 +102,5 @@ catch {
                 });
         }
 
-        public string Name { get { return "Pre-Operation"; } }
-
-        public void DryRun()
-        {
-            Logger.WithLogSection(Name, () => { });
-        }
     }
 }

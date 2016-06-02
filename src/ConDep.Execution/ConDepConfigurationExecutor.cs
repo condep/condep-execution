@@ -9,11 +9,11 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
 using ConDep.Dsl;
+using ConDep.Dsl.Builders;
 using ConDep.Dsl.Config;
 using ConDep.Dsl.Harvesters;
 using ConDep.Dsl.Logging;
 using ConDep.Dsl.Remote;
-using ConDep.Dsl.Sequence;
 using ConDep.Dsl.Validation;
 using ConDep.Execution.Config;
 using ConDep.Execution.Logging;
@@ -167,30 +167,29 @@ namespace ConDep.Execution
 
             ServicePointManager.ServerCertificateValidationCallback = ValidateConDepNodeServerCert;
 
-            var status = new StatusReporter();
-
             try
             {
                 Validate(clientValidator, serverValidator);
 
-                ExecutePreOps(settings, status, token);
+                ExecutePreOps(settings, token);
                 _serverNodeInstalled = true;
 
                 //Todo: Result of merge. Not sure if this is correct.
-                token.Register(() => Cancel(settings, status, token));
+                token.Register(() => Cancel(settings, token));
 
+                var lbLocator = new LoadBalancerLookup(settings.Config.LoadBalancer);
                 foreach (var runbook in runbooks)
                 {
                     var servers = serverHandler.GetServers(runbook, settings);
                     settings.Config.Servers = servers.ToList();
-                    runbook.Execute(new OperationsBuilder(1, settings, token), settings);
+                    runbook.Execute(new OperationsBuilder(1, settings, lbLocator, token), settings);
                 }
 
                 return new ConDepExecutionResult(true);
             }
             catch (OperationCanceledException)
             {
-                Cancel(settings, status, token);
+                Cancel(settings, token);
                 return new ConDepExecutionResult(false) { Cancelled = true };
             }
             catch (AggregateException aggEx)
@@ -200,7 +199,7 @@ namespace ConDep.Execution
                 {
                     if (inner is OperationCanceledException)
                     {
-                        Cancel(settings, status, token);
+                        Cancel(settings, token);
                         result.Cancelled = true;
                         Logger.Warn("ConDep execution cancelled.");
                     }
@@ -223,7 +222,7 @@ namespace ConDep.Execution
             }
             finally
             {
-                if (!_cancelled) ExecutePostOps(settings, status, token);
+                if (!_cancelled) ExecutePostOps(settings, token);
             }
         }
 
@@ -234,7 +233,7 @@ namespace ConDep.Execution
                    && DateTime.Now >= cert.NotBefore;
         }
 
-        private void Cancel(ConDepSettings settings, StatusReporter status, CancellationToken token)
+        private void Cancel(ConDepSettings settings, CancellationToken token)
         {
             Logger.WithLogSection("Cancellation", () =>
             {
@@ -243,7 +242,7 @@ namespace ConDep.Execution
                     var tokenSource = new CancellationTokenSource();
                     Logger.Warn("Cancelling execution gracefully!");
                     _cancelled = true;
-                    if (_serverNodeInstalled) ExecutePostOps(settings, status, tokenSource.Token);
+                    if (_serverNodeInstalled) ExecutePostOps(settings, tokenSource.Token);
                 }
                 catch (AggregateException aggEx)
                 {
@@ -263,13 +262,13 @@ namespace ConDep.Execution
         {
             clientValidator.Validate();
 
-            if (!serverValidator.IsValid())
+            if (!serverValidator.Validate())
             {
                 throw new ConDepValidationException("Not all servers fulfill ConDep's requirements. Aborting execution.");
             }
         }
 
-        public static void ExecutePreOps(ConDepSettings conDepSettings, IReportStatus status, CancellationToken token)
+        public static void ExecutePreOps(ConDepSettings conDepSettings, CancellationToken token)
         {
             Logger.WithLogSection("Executing pre-operations", () =>
             {
@@ -281,7 +280,8 @@ namespace ConDep.Execution
                         if (!ConDepGlobals.ServersWithPreOps.ContainsKey(server.Name))
                         {
                             var remotePreOps = new PreRemoteOps(new PowerShellExecutor());
-                            remotePreOps.Execute(server, status, conDepSettings, token);
+                            var dsl = new RemoteOperationsBuilder(server, conDepSettings, token);
+                            remotePreOps.Execute(dsl, server, conDepSettings, token);
                             ConDepGlobals.ServersWithPreOps.Add(server.Name, server);
                         }
                     });
@@ -289,7 +289,7 @@ namespace ConDep.Execution
             });
         }
 
-        private static void ExecutePostOps(ConDepSettings conDepSettings, IReportStatus status, CancellationToken token)
+        private static void ExecutePostOps(ConDepSettings conDepSettings, CancellationToken token)
         {
             foreach (var server in conDepSettings.Config.Servers)
             {
@@ -297,7 +297,8 @@ namespace ConDep.Execution
                 if (ConDepGlobals.ServersWithPreOps.ContainsKey(server.Name))
                 {
                     var remotePostOps = new PostRemoteOps();
-                    remotePostOps.Execute(server, status, conDepSettings, token);
+                    var dsl = new RemoteOperationsBuilder(server, conDepSettings, token);
+                    remotePostOps.Execute(dsl, server, conDepSettings, token);
                     ConDepGlobals.ServersWithPreOps.Remove(server.Name);
                 }
             }

@@ -1,5 +1,7 @@
+using System;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
+using ConDep.Dsl;
 using ConDep.Dsl.Logging;
 using ConDep.Dsl.Validation;
 
@@ -7,7 +9,7 @@ namespace ConDep.Execution.Validation
 {
     public class ClientValidator : IValidateClient
     {
-        public void Validate()
+        public bool Validate()
         {
             Logger.WithLogSection("Validating Client", () =>
                 {
@@ -23,7 +25,9 @@ namespace ConDep.Execution.Validation
                             var result = pipeline.Invoke();
 
                             if (result == null)
+                            {
                                 throw new ConDepValidationException("Unable to detect PowerShell version on client! PowerShell version 3.0 or higher is required.");
+                            }
 
                             if (result.Count == 1)
                             {
@@ -31,13 +35,14 @@ namespace ConDep.Execution.Validation
                                 if (version >= 3)
                                 {
                                     Logger.Info(string.Format("PowerShell version {0} detected on client.", version));
-                                    return;
+                                    return true;
                                 }
                             }
                             throw new ConDepValidationException("Unable to detect PowerShell version on client! PowerShell version 3.0 or higher is required.");
                         }
                     }
                 });
+            return true;
         }
     }
 }

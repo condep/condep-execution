@@ -84,15 +84,15 @@ namespace ConDep.Dsl.Tests
     }
 
     [Tier(Tier.Web)]
-    public class MyArtifactWithTierTag : Runbook.Local
+    public class MyArtifactWithTierTag : Runbook
     {
-        public override void Configure(IOfferLocalOperations onLocalMachine, ConDepSettings settings)
+        public override void Execute(IOfferOperations dsl, ConDepSettings settings)
         {
         }
     }
-    public class MyArtifactWithoutTierTag : Runbook.Local
+    public class MyArtifactWithoutTierTag : Runbook
     {
-        public override void Configure(IOfferLocalOperations onLocalMachine, ConDepSettings settings)
+        public override void Execute(IOfferOperations dsl, ConDepSettings settings)
         {
         }
     }

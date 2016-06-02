@@ -23,7 +23,7 @@ namespace ConDep.Execution.Validation
             _psExecutor = psExecutor;
         }
 
-        public bool IsValid()
+        public bool Validate()
         {
             return Logger.WithLogSection("Validating Servers", () =>
             {
@@ -157,5 +157,6 @@ namespace ConDep.Execution.Validation
             }
             return success;
         }
+
     }
 }

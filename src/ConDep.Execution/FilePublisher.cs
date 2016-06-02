@@ -10,7 +10,7 @@ namespace ConDep.Execution
     {
         public void PublishFile(string srcFile, string dstFile, ServerConfig server, ConDepSettings settings)
         {
-            var api = new Api(new ConDepNodeUrl(server, settings), server.DeploymentUser.UserName, server.DeploymentUser.Password, server.Node.TimeoutInSeconds.Value * 1000);
+            var api = new Api(new ConDepNodeUrl(server), server.DeploymentUser.UserName, server.DeploymentUser.Password, server.Node.TimeoutInSeconds.Value * 1000);
             var result = api.SyncFile(srcFile, dstFile);
 
             if (result == null) return;
@@ -32,7 +32,7 @@ namespace ConDep.Execution
 
         public void PublishDirectory(string srcDir, string dstDir, ServerConfig server, ConDepSettings settings)
         {
-            var api = new Api(new ConDepNodeUrl(server, settings), server.DeploymentUser.UserName, server.DeploymentUser.Password, server.Node.TimeoutInSeconds.Value * 1000);
+            var api = new Api(new ConDepNodeUrl(server), server.DeploymentUser.UserName, server.DeploymentUser.Password, server.Node.TimeoutInSeconds.Value * 1000);
             var result = api.SyncDir(srcDir, dstDir);
 
             if (result == null) return;

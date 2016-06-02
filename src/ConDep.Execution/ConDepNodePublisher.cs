@@ -7,11 +7,10 @@ using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using System.Text.RegularExpressions;
 using System.Threading;
-using ConDep.Dsl;
 using ConDep.Dsl.Config;
 using ConDep.Dsl.Logging;
 using ConDep.Dsl.Remote;
-using ConDep.Dsl.Resources;
+using ConDep.Dsl.Remote.Node;
 using ConDep.Execution.PSScripts.ConDepNode;
 using ConDepResourceFiles = ConDep.Execution.Resources.ConDepResourceFiles;
 
@@ -87,7 +86,7 @@ namespace ConDep.Execution
                     },
                     logOutput: true);
 
-            return nodeCheckResult.Single(psObject => psObject.ConDepResult != null).ConDepResult;
+            return nodeCheckResult.ConDepResult;
         }
 
         public void StartNode(ServerConfig server)
@@ -101,7 +100,7 @@ namespace ConDep.Execution
 
         public bool ValidateNode(ConDepNodeUrl url, string userName, string password, ServerConfig server)
         {
-            var api = new Dsl.Remote.Node.Api(url, userName, password, server.Node.TimeoutInSeconds.Value * 1000);
+            var api = new Api(url, userName, password, server.Node.TimeoutInSeconds.Value * 1000);
             if (!api.Validate())
             {
                 Thread.Sleep(1000);

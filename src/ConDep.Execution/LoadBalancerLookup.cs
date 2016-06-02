@@ -35,4 +35,24 @@ namespace ConDep.Execution
         }
         
     }
+
+    public class DefaultLoadBalancer : ILoadBalance
+    {
+        public DefaultLoadBalancer()
+        {
+            Mode = LoadBalancerMode.RoundRobin;
+        }
+
+        public Result BringOffline(string serverName, string farm, LoadBalancerSuspendMethod suspendMethod)
+        {
+            return Result.SuccessUnChanged();
+        }
+
+        public Result BringOnline(string serverName, string farm)
+        {
+            return Result.SuccessUnChanged();
+        }
+
+        public LoadBalancerMode Mode { get; set; }
+    }
 }
