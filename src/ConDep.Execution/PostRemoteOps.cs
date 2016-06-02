@@ -12,7 +12,7 @@ namespace ConDep.Execution
         {
             token.ThrowIfCancellationRequested();
 
-            Logger.WithLogSection($"Stopping ConDepNode on server {server.Name}", () =>
+            Logger.WithLogSection(string.Format("Stopping ConDepNode on server {0}", server.Name), () =>
             {
                 var executor = new PowerShellExecutor();
                 executor.Execute(server, "Stop-ConDepNode", mod =>
