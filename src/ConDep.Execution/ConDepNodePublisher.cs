@@ -86,7 +86,7 @@ namespace ConDep.Execution
                     },
                     logOutput: true);
 
-            return nodeCheckResult.ConDepResult;
+            return nodeCheckResult.Single(psObject => psObject.ConDepResult != null).ConDepResult;
         }
 
         public void StartNode(ServerConfig server)

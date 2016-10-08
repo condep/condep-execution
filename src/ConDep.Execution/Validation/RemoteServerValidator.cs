@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Management.Automation;
 using ConDep.Dsl.Config;
 using ConDep.Dsl.Harvesters;
 using ConDep.Dsl.Logging;
@@ -66,13 +68,15 @@ namespace ConDep.Execution.Validation
         {
             return Logger.WithLogSection("Validating remote PowerShell version (must be 3.0 or higher)", () =>
             {
-                var versionResult = _psExecutor.Execute(currentServer, "$psVersionTable.PSVersion.Major", mod => mod.LoadConDepModule = false, logOutput: false);
+                dynamic versionResult = _psExecutor.Execute(currentServer, "$psVersionTable.PSVersion.Major", mod => mod.LoadConDepModule = false, logOutput: false);
                 if (versionResult == null)
                 {
                     Logger.Error("Unable to get remote PowerShell version.");
                     return false;
                 }
-                var version = versionResult.First();
+
+                dynamic version = versionResult.First();
+
                 Logger.Info(string.Format("Remote PowerShell version is {0}", version));
                 return version >= 3;
             });
