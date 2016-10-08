@@ -68,14 +68,14 @@ namespace ConDep.Execution.Validation
         {
             return Logger.WithLogSection("Validating remote PowerShell version (must be 3.0 or higher)", () =>
             {
-                dynamic versionResult = _psExecutor.Execute(currentServer, "$psVersionTable.PSVersion.Major", mod => mod.LoadConDepModule = false, logOutput: false);
+                var versionResult = _psExecutor.Execute(currentServer, "$psVersionTable.PSVersion.Major", mod => mod.LoadConDepModule = false, logOutput: false);
                 if (versionResult == null)
                 {
                     Logger.Error("Unable to get remote PowerShell version.");
                     return false;
                 }
 
-                dynamic version = versionResult.First();
+                var version = versionResult.First();
 
                 Logger.Info(string.Format("Remote PowerShell version is {0}", version));
                 return version >= 3;
