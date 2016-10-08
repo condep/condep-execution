@@ -32,6 +32,7 @@ namespace ConDep.Execution.Tests
         }
 
         [Test]
+        [Ignore]
         public void TestThat_Something()
         {
             ConDep.Dsl.Logging.Logger.Initialize(CreateMemoryLogger());
