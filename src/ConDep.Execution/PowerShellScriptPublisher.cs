@@ -13,27 +13,39 @@ namespace ConDep.Execution
     internal class PowerShellScriptPublisher
     {
         private readonly ConDepSettings _settings;
+        private string _localTargetPath;
 
         public PowerShellScriptPublisher(ConDepSettings settings)
         {
             _settings = settings;
+            _localTargetPath = Path.Combine(Path.GetTempPath(), @"PSScripts\ConDep");
         }
 
         public void PublishScripts(ServerConfig server)
         {
-            string localTargetPath = Path.Combine(Path.GetTempPath(), @"PSScripts\ConDep");
 
-            if (Directory.Exists(localTargetPath))
+            if (Directory.Exists(_localTargetPath))
             {
-                Directory.Delete(localTargetPath, true);
+                Directory.Delete(_localTargetPath, true);
             }
 
-            SaveConDepScriptModuleResourceToFolder(localTargetPath);
-            SaveConDepScriptResourcesToFolder(localTargetPath);
-            SaveExternalScriptResourcesToFolder(localTargetPath);
-            SaveExecutionPathScriptsToFolder(localTargetPath, _settings.Config);
+            AppDomain.CurrentDomain.AssemblyLoad += OnAssemblyLoad_UploadAssemblyScripts;
 
-            SyncDir(localTargetPath, server.GetServerInfo().ConDepScriptsFolderDos, server, _settings);
+            SaveConDepScriptModuleResourceToFolder(_localTargetPath);
+            SaveConDepScriptResourcesToFolder(_localTargetPath);
+            SaveExternalScriptResourcesToFolder(_localTargetPath);
+            SaveExecutionPathScriptsToFolder(_localTargetPath, _settings.Config);
+
+            SyncDir(_localTargetPath, server.GetServerInfo().ConDepScriptsFolderDos, server, _settings);
+        }
+
+        private void OnAssemblyLoad_UploadAssemblyScripts(object sender, AssemblyLoadEventArgs args)
+        {
+            var assembly = args.LoadedAssembly;
+            if (!assembly.IsDynamic && !( assembly.FullName.StartsWith("System.") || assembly.FullName.StartsWith("Microsoft.") || assembly.FullName.StartsWith("mscorlib")))
+            {
+                GetResourcesFromAssembly(assembly, _localTargetPath);
+            }
         }
 
         public void SyncDir(string srcDir, string dstDir, ServerConfig server, ConDepSettings settings)
@@ -100,6 +112,7 @@ namespace ConDep.Execution
             var files = new List<string>();
             foreach (
                 var childAssembly in
+
                     AppDomain.CurrentDomain.GetAssemblies()
                         .Where(
                             x =>
