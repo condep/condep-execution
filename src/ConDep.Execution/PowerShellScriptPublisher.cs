@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using ConDep.Dsl.Config;
+using ConDep.Dsl.Logging;
 using ConDep.Execution.PSScripts.ConDep;
 using ConDep.Execution.Resources;
 
@@ -13,15 +15,17 @@ namespace ConDep.Execution
     internal class PowerShellScriptPublisher
     {
         private readonly ConDepSettings _settings;
+        private readonly ServerConfig _server;
         private string _localTargetPath;
 
-        public PowerShellScriptPublisher(ConDepSettings settings)
+        public PowerShellScriptPublisher(ConDepSettings settings, ServerConfig server)
         {
             _settings = settings;
+            _server = server;
             _localTargetPath = Path.Combine(Path.GetTempPath(), @"PSScripts\ConDep");
         }
 
-        public void PublishScripts(ServerConfig server)
+        public void PublishScripts()
         {
 
             if (Directory.Exists(_localTargetPath))
@@ -36,7 +40,7 @@ namespace ConDep.Execution
             SaveExternalScriptResourcesToFolder(_localTargetPath);
             SaveExecutionPathScriptsToFolder(_localTargetPath, _settings.Config);
 
-            SyncDir(_localTargetPath, server.GetServerInfo().ConDepScriptsFolderDos, server, _settings);
+            SyncDir(_localTargetPath, _server.GetServerInfo().ConDepScriptsFolderDos);
         }
 
         private void OnAssemblyLoad_UploadAssemblyScripts(object sender, AssemblyLoadEventArgs args)
@@ -44,20 +48,28 @@ namespace ConDep.Execution
             var assembly = args.LoadedAssembly;
             if (!assembly.IsDynamic && !( assembly.FullName.StartsWith("System.") || assembly.FullName.StartsWith("Microsoft.") || assembly.FullName.StartsWith("mscorlib")))
             {
-                GetResourcesFromAssembly(assembly, _localTargetPath);
+                Logger.WithLogSection(string.Format("Adding missing powershell scripts from assembly {0}", assembly.FullName), () =>
+                {
+                    var files = GetResourcesFromAssembly(assembly, _localTargetPath);
+                    foreach (var fileName in files)
+                    {
+                        Logger.Info("Stored powershell script: {0}", fileName);
+                    }
+                    SyncDir(_localTargetPath, _server.GetServerInfo().ConDepScriptsFolderDos);
+                });
             }
         }
 
-        public void SyncDir(string srcDir, string dstDir, ServerConfig server, ConDepSettings settings)
+        public void SyncDir(string srcDir, string dstDir)
         {
             var filePublisher = new FilePublisher();
-            filePublisher.PublishDirectory(srcDir, dstDir, server, settings);
+            filePublisher.PublishDirectory(srcDir, dstDir, _server, _settings);
         }
 
-        public void PublishRemoteHelperAssembly(ServerConfig server)
+        public void PublishRemoteHelperAssembly()
         {
             var src = Path.Combine(Path.GetDirectoryName(GetType().Assembly.Location), "ConDep.Dsl.Remote.Helpers.dll");
-            CopyFile(src, server, _settings);
+            CopyFile(src, _server, _settings);
         }
 
         private void SaveConDepScriptModuleResourceToFolder(string localTargetPath)

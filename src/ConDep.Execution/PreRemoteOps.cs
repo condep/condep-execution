@@ -33,9 +33,9 @@ namespace ConDep.Execution
 
                 PublishConDepNode(server, settings);
 
-                var scriptPublisher = new PowerShellScriptPublisher(settings);
-                Logger.WithLogSection("Copying external scripts", () => scriptPublisher.PublishScripts(server));
-                Logger.WithLogSection("Copying remote helper assembly", () => scriptPublisher.PublishRemoteHelperAssembly(server));
+                var scriptPublisher = new PowerShellScriptPublisher(settings, server);
+                Logger.WithLogSection("Copying external scripts", () => scriptPublisher.PublishScripts());
+                Logger.WithLogSection("Copying remote helper assembly", () => scriptPublisher.PublishRemoteHelperAssembly());
 
                 InstallChocolatey(server, settings);
             });
