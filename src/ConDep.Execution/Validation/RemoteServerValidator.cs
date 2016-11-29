@@ -112,6 +112,11 @@ namespace ConDep.Execution.Validation
                               server.Name));
             var cmd = server.DeploymentUser.IsDefined() ? string.Format("id -r:{0} -u:{1} -p:\"{2}\"", server.Name,
                 server.DeploymentUser.UserName, server.DeploymentUser.Password) : string.Format("id -r:{0}", server.Name);
+            if (server.PowerShell.SSL)
+            {
+                Logger.Info(string.Format("Using SSL via WinRM to reach remote server [{0}]..."));
+                cmd = string.Concat(cmd, " -usessl");
+            }
 
             var success = false;
             var path = Environment.ExpandEnvironmentVariables(@"%windir%\system32\WinRM.cmd");
