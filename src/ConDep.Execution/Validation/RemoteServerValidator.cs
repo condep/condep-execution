@@ -114,7 +114,7 @@ namespace ConDep.Execution.Validation
                 server.DeploymentUser.UserName, server.DeploymentUser.Password) : string.Format("id -r:{0}", server.Name);
             if (server.PowerShell.SSL)
             {
-                Logger.Info(string.Format("Using SSL via WinRM to reach remote server [{0}]..."));
+                Logger.Info(string.Format("Using SSL via WinRM to reach remote server [{0}]...", server.Name));
                 cmd = string.Concat(cmd, " -usessl");
             }
 
