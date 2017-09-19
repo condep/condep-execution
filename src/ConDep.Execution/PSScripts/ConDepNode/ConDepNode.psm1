@@ -63,9 +63,12 @@ function Stop-ConDepNode() {
 
 	if($wmiService) {
 		if($wmiService.State -eq "Running") {
-    		$service = Get-Service condepnode -ErrorAction Stop
+			$service = Get-Service condepnode -ErrorAction Stop
 			$service.Stop()
 			$service.WaitForStatus([System.ServiceProcess.ServiceControllerStatus]::Stopped)
+		}
+		elseif($wmiService.State -eq "Stopped") {
+			write-host "Failed to stop ConDepNode Windows service, because it's already stopped."
 		}
 		else {
 			throw "Failed to stop ConDepNode Windows service, because it's not running. The current state of the service is $($wmiService.State)."
