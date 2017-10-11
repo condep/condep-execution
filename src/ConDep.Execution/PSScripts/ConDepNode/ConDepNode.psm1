@@ -44,9 +44,10 @@ function Start-ConDepNode() {
 
 	if($wmiService) {
 		if($wmiService.State -eq "Stopped") {
-    		$service = Get-Service condepnode -ErrorAction Stop
+			$timeSpan = New-TimeSpan -Minute 1
+    			$service = Get-Service condepnode -ErrorAction Stop
 			$service.Start()
-			$service.WaitForStatus([System.ServiceProcess.ServiceControllerStatus]::Running)
+			$service.WaitForStatus([System.ServiceProcess.ServiceControllerStatus]::Running, $timeSpan)
 		}
 		else {
 			throw "Failed to start ConDepNode Windows service, because it's not stopped. The current state of the service is $($wmiService.State)."
