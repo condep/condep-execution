@@ -53,6 +53,11 @@ namespace ConDep.Execution
             return Result.SuccessUnChanged();
         }
 
+        public LoadBalanceState GetServerState(string serverName, string farm)
+        {
+            return LoadBalanceState.Online;
+        }
+
         public LoadBalancerMode Mode { get; set; }
     }
 }
