@@ -32,7 +32,7 @@ namespace ConDep.Execution.Tests
         }
 
         [Test]
-        [Ignore]
+        [Ignore("Unknown")]
         public void TestThat_Something()
         {
             ConDep.Dsl.Logging.Logger.Initialize(CreateMemoryLogger());

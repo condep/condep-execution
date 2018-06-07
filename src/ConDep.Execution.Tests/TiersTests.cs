@@ -61,8 +61,7 @@ namespace ConDep.Dsl.Tests
         }
 
         [Test]
-        [ExpectedException(typeof(ConDepNoRunbookTierDefinedException))]
-        [Ignore]
+        [Ignore("Unknown")]
         public void TestThat_ArtifactFailsWhenNotTaggedWithTierForTierConfig()
         {
             //var configHandler = new RunbookConfigurationHandler(new RunbookHandler(), new RunbookDependencyHandler(),
