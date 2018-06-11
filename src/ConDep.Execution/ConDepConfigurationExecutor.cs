@@ -141,8 +141,10 @@ namespace ConDep.Execution
                 //    sequenceManager.DryRun(conDepSettings);
                 //    return new ConDepExecutionResult(true);
                 //}
-
-                return new ConDepConfigurationExecutor().Execute(conDepSettings, clientValidator, serverValidator, runbookConfigurationHandler.GetRunbooksToExecute(conDepSettings), new ServerHandler(), token);
+                runbookConfigurationHandler.LoadBindingRedirects(conDepSettings);
+                ConDepExecutionResult result = new ConDepConfigurationExecutor().Execute(conDepSettings, clientValidator, serverValidator, runbookConfigurationHandler.GetRunbooksToExecute(conDepSettings), new ServerHandler(), token);
+                runbookConfigurationHandler.UnloadBindingRedirects();
+                return result;
             }
             catch (Exception ex)
             {
