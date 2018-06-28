@@ -35,6 +35,9 @@ namespace ConDep.Execution.Config
                 throw new ConDepConfigurationException(
                     "You cannot define both Tiers and Servers at the same level. Either you use Tiers and define servers for each tier or you use Servers without Tiers. Servers without Tiers would be the same as having just one Tier.");
 
+            // Use secrets provider to get deployment user if given. This will overwrite DeploymentUser values set in the config serializer above.
+            if (config.SecretsProvider.Provider != null) config.DeploymentUser = GetDeploymentUserFromSecretsProvider(config.SecretsProvider);
+
             if (config.Servers == null) config.Servers = new List<ServerConfig>();
 
             if (config.Node.Port == null) config.Node.Port = 4444;
@@ -64,6 +67,13 @@ namespace ConDep.Execution.Config
                 if (server.PowerShell.HttpsPort == null) server.PowerShell.HttpsPort = config.PowerShell.HttpsPort;
             }
             return config;
+        }
+
+        private DeploymentUserConfig GetDeploymentUserFromSecretsProvider(SecretsProviderConfig secretsProviderConfig)
+        {
+            var secretsProviderLookup = new SecretsProviderLookup(secretsProviderConfig);
+            var secretProvider = secretsProviderLookup.GetSecretsProvider();
+            return secretProvider.GetDeploymentUser();
         }
     }
 }
