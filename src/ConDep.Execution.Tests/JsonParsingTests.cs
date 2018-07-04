@@ -240,8 +240,37 @@ namespace ConDep.Dsl.Tests
     }
 }";
 
+        private string _secretsProviderJson =
+                    @"{
+    ""LoadBalancer"": 
+    {
+        ""Name"": ""jat-nlb01"",
+        ""Provider"": ""ConDep.Dsl.LoadBalancer.Ace.dll"",
+        ""UserName"": ""torresdal\\nlbUser"",
+        ""Password"": ""verySecureP@ssw0rd"",
+        ""Mode"": ""Sticky"",
+		""SuspendMode"" : ""Graceful"",
+        ""CustomValues"" :
+        [
+            {
+                ""Key"" : ""AwsSuspendWaitTime"",
+                ""Value"" : ""30""
+            },
+            {
+                ""Key"" : ""AwsActivateWaitTime"",
+                ""Value"" : ""40""
+            }
+        ]
+    },
+    ""SecretsProvider"": 
+    {
+        ""Provider"": ""ConDep.Execution.Tests.dll""
+    }
+}";
+
         private ConDepEnvConfig _config;
         private ConDepEnvConfig _tiersConfig;
+        private ConDepEnvConfig _secretsProviderConfig;
         private string _cryptoKey;
 
         [SetUp]
@@ -249,11 +278,13 @@ namespace ConDep.Dsl.Tests
         {
             var memStream = new MemoryStream(Encoding.UTF8.GetBytes(_json));
             var tiersMemStream = new MemoryStream(Encoding.UTF8.GetBytes(_tiersJson));
+            var secretsProviderMemStream = new MemoryStream(Encoding.UTF8.GetBytes(_secretsProviderJson));
 
             _cryptoKey = JsonPasswordCrypto.GenerateKey(256);
             var parser = new EnvConfigParser(new JsonSerializer<ConDepEnvConfig>(new JsonConfigCrypto(_cryptoKey)));
             _config = parser.GetTypedEnvConfig(memStream);
             _tiersConfig = parser.GetTypedEnvConfig(tiersMemStream);
+            _secretsProviderConfig = parser.GetTypedEnvConfig(secretsProviderMemStream);
         }
 
         [Test]
@@ -300,6 +331,14 @@ namespace ConDep.Dsl.Tests
         {
             Assert.That(_config.DeploymentUser.UserName, Is.Not.Null.Or.Empty);
             Assert.That(_config.DeploymentUser.Password, Is.Not.Null.Or.Empty);
+        }
+
+        [Test]
+        public void TestThatSecretsProviderSuppliesCredentials()
+        {
+            Assert.That(_secretsProviderConfig.SecretsProvider, Is.Not.Null);
+            Assert.That(_secretsProviderConfig.DeploymentUser.UserName, Is.EqualTo("username_from_secrets_provider"));
+            Assert.That(_secretsProviderConfig.DeploymentUser.Password, Is.EqualTo("password_from_secrets_provider"));
         }
 
         [Test]
